@@ -1,77 +1,74 @@
 package com.maxclay.dao;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.gridfs.GridFsCriteria;
-import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.maxclay.model.Book;
-import com.mongodb.gridfs.GridFSDBFile;
 
 @Repository
-public class BookDaoImpl implements BookDao{
+public class BookDaoImpl implements BookDao {
 
 	 
-	private final GridFsTemplate gridFsTemplate;
-
+	private final MongoOperations mongoOperations;
+	
 	@Autowired
-	public BookDaoImpl(GridFsTemplate gridFsTemplate) {
+	public BookDaoImpl(MongoOperations mongoOperations) {
 		
-		this.gridFsTemplate = gridFsTemplate;
+		this.mongoOperations = mongoOperations;
 		
 	}
 	
 	@Override
 	public void add(Book book) {
 		
-		gridFsTemplate.store(new ByteArrayInputStream(book.getBookSourceInBytes()), book.getName());
+		mongoOperations.save(book);
+	}
+
+	@Override
+	public Book get(String id) {
 		
+		return mongoOperations.findOne(Query.query(Criteria.where("id").is(id)), Book.class);
 	}
 
 	@Override
 	public List<Book> getAll() {
 		
-		List<Book> books = new LinkedList<Book>();
-		for(GridFSDBFile f : gridFsTemplate.find(null))
-			books.add(gridFileToBook(f));
-		
-		return books;
+		return mongoOperations.findAll(Book.class);
 	}
 
 	@Override
-	public Book getByName(String name) {
+	public List<Book> getByTitle(String title) {
 		
-		GridFSDBFile file = gridFsTemplate.findOne(Query.query(GridFsCriteria.whereFilename().is(name)));
-		
-		return gridFileToBook(file);
+		return mongoOperations.find(Query.query(Criteria.where("title").is(title)), Book.class);
 	}
 
 	@Override
-	public void delete(String name) {
+	public List<Book> getByAuthor(String author) {
 		
-		gridFsTemplate.delete(Query.query(GridFsCriteria.whereFilename().is(name)));
-		
+		return mongoOperations.find(Query.query(Criteria.where("author").is(author)), Book.class);
 	}
-	
-	private Book gridFileToBook(GridFSDBFile file) {
+
+	@Override
+	public List<Book> getByYear(short year) {
 		
-		Book book = new Book();
-		try {
-			book.setBookSourceInBytes(IOUtils.toByteArray(file.getInputStream()));
-		} catch (IOException e) {
-			System.out.println("Converting GridFSDBFile to Book error!");
-			e.printStackTrace();
-		}
-		book.setName(file.getFilename());
-		
-		return book;
+		return mongoOperations.find(Query.query(Criteria.where("year").is(year)), Book.class);
 	}
-	
+
+	@Override
+	public void delete(Book book) {
+		
+		mongoOperations.remove(book);
+	}
+
+	@Override
+	public void delete(String id) {
+		
+		mongoOperations.remove(Query.query(Criteria.where("id").is(id)), Book.class);
+	}
+
 }
