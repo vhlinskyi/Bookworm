@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head lang="en">
 	<meta charset="UTF-8"/>
-	<title>Bookworm</title>
+	<title th:text="${book.title}">Bookworm</title>
 
     <!-- Bootstrap Core CSS -->
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" media="screen" />
@@ -20,7 +20,7 @@
 </head>
 
 <body>
-
+   
     <div id="wrapper">
 
         <!-- Navigation -->
@@ -88,36 +88,39 @@
                 <!-- Page Heading -->
                 <div class="row">
                     <div class="col-lg-12">
-                        <h1 class="page-header">
-                            Popular  <small>The most rated books</small>
-                        </h1>
+                        <h2 th:text="${book.title}" class="page-header"></h2>
                     </div>
                 </div>
-
-                <div class="media-list" >
-					<div class="book-item col-lg-12" th:each="book : ${books}">
-				    	<div class="media">
-				    		<div class="media-left">
-						    	<a th:href="@{/book?id=__${book.id}__}">
-				      				<img class="media-object" th:src="${book.path}"/>
-							    </a>
-							 </div>
-				      		<div class="media-body">
-						    <h4 th:text="${book.title}" class="media-heading">Book title</h4>
-						    <h5 th:text="@{Author: __${book.author}__}" class="media-heading">Book title</h5>
-						    <br/><p th:text="${book.description}">Book description</p>
-						  </div>
-				    	</div>
-				  </div>
+                
+                <div class="row">
+                    <div class="col-lg-12">
+                    	<h4 th:text="@{Author: __${book.author}__}" >Author</h4>
+                    	<h4 th:text="@{Year: __${book.year}__}" >Year</h4>
+                    	<h4 th:text="@{Pages: __${book.pages}__}" >Pages</h4>
+                    	<h4 th:text="@{Language: __${book.language}__}" >Language</h4>
+                    	<h4>Description:</h4>
+                        <p th:text="${book.description}" ></p>
+                        <p class="page-header"></p>
+                    </div>
+                    
+                </div>
+                
+				<div class="row">
+					<div class="col-lg-12">
+					<h4 th:text="@{You can read or download __${book.title}__ just now:}" ></h4>
+					</div>
+            		<object th:attr="data=@{view?source=__${book.source}__}" type="application/pdf"> </object>
+            	</div>
 				
+				<div class="row">
+				<h4 class="page-header">Comments:</h4>
 				</div>
-				
             </div>
 
         </div>
         
-    </div>
-
+    </div>			
+           
     <!-- jQuery -->
     <script th:src="@{/js/jquery.js}"></script>
 

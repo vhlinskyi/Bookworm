@@ -53,7 +53,6 @@ public class BookSourceDaoImpl implements BookSourceDao{
 	public BookSource get(String id) {
 		
 		GridFSDBFile file = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(id)));
-
 		return gridFileToBookSource(file);
 	}
 
@@ -61,7 +60,6 @@ public class BookSourceDaoImpl implements BookSourceDao{
 	public BookSource getByBook(Book book) {
 		
 		GridFSDBFile file = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(book.getSource())));
-
 		return gridFileToBookSource(file);
 	}
 
@@ -79,17 +77,17 @@ public class BookSourceDaoImpl implements BookSourceDao{
 	
 	private BookSource gridFileToBookSource(GridFSDBFile file) {
 		
-		BookSource book = new BookSource();
+		BookSource bookSource = new BookSource();
 		try {
-			book.setBookSourceInBytes(IOUtils.toByteArray(file.getInputStream()));
+			bookSource.setBookSourceInBytes(IOUtils.toByteArray(file.getInputStream()));
 		} catch (IOException e) {
 			System.out.println("Converting GridFSDBFile to BookSource error!");
 			e.printStackTrace();
 		}
-		book.setFileName(file.getFilename());
-		book.setId(file.get("_id").toString());
+		bookSource.setFileName(file.getFilename());
+		bookSource.setId(file.get("_id").toString());
 		
-		return book;
+		return bookSource;
 	}
 	
 }
