@@ -89,29 +89,51 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h1 class="page-header">
-                            Popular  <small>The most rated books</small>
+                            Adding books
                         </h1>
                     </div>
                 </div>
 
-                <div class="media-list" >
-					<div class="book-item col-lg-12" th:each="book : ${books}">
-				    	<div class="media">
-				    		<div class="media-left">
-						    	<a th:href="@{/book?id=__${book.id}__}">
-				      				<img class="media-object" th:src="${book.path}"/>
-							    </a>
-							 </div>
-				      		<div class="media-body">
-						    <h4 th:text="${book.title}" class="media-heading">Book title</h4>
-						    <h5 th:text="@{Author: __${book.author}__}" class="media-heading">Book title</h5>
-						    <br/><p th:text="${book.description}">Book description</p>
-						  </div>
-				    	</div>
-				  </div>
-				
-				</div>
-				
+				<form th:action="@{/add}" method="post" th:object="${book}" enctype="multipart/form-data">
+					<fieldset class="col-lg-10">				
+						<div class="form-group">
+							<label for="title">Title: </label>
+						    <input class="form-control" type="text" th:field="*{title}" placeholder="Enter title" />
+						</div>
+						<div class="form-group">
+							<label for="author">Author: </label>
+						    <input class="form-control" type="text" th:field="*{author}" placeholder="Enter author" />
+						</div>
+						<div class="form-group">
+							<label for="year">Year: </label>
+						    <input class="form-control" type="number" th:field="*{year}" />
+						</div>
+						<div class="form-group">
+							<label for="pages">Pages: </label>
+						    <input class="form-control" type="number" th:field="*{pages}" />
+						</div>
+						<div class="form-group">
+							<label for="language">Language: </label>
+						    <input class="form-control" type="text" th:field="*{language}" placeholder="Enter language" />
+						</div>
+						<div class="form-group">
+							<label for="description">Description: </label>
+							<textarea class="form-control" rows="3" th:field="*{description}" placeholder="Enter description" ></textarea>
+						</div>
+						<div class="form-group">
+							<label for="file">Choose book source(PDF): </label>
+							<input type="file" id="source" name="file" />
+						</div>
+						<div class="form-group">
+							<label for="file">Choose book image: </label>
+							<input type="file" id="image" name="image"/>
+						</div>
+						<div class="submit">
+					    	<button class="btn btn-success" type="submit" name="save" >Submit</button>
+					    </div>
+					</fieldset>
+				</form>
+								
             </div>
 
         </div>
