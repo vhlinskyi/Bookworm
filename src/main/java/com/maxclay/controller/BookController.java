@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
@@ -118,8 +117,13 @@ public class BookController {
 	 
 	 @RequestMapping(value = "/uploadedPicture")
 	 public void getUploadedPicture(@RequestParam(required = true) String id, HttpServletResponse response) throws IOException {
-	
-		 FileSystemResource pic = new FileSystemResource(bookDao.get(id).getPath());
+		 
+		 Resource pic;
+		 pic = new FileSystemResource(bookDao.get(id).getPath());
+		 
+		 if(!pic.exists())
+			 pic = defaultBookPicture;
+		 
 		 response.setHeader("Content-Type", URLConnection.guessContentTypeFromName(pic.getFilename()));
 		 IOUtils.copy(pic.getInputStream(), response.getOutputStream());	
 
