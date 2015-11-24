@@ -5,7 +5,7 @@ import com.maxclay.model.BookSource;
 
 public interface BookSourceDao {
 
-	public void add(BookSource bookSource);
+	public BookSource add(BookSource bookSource);
 	public BookSource get(String id);
 	public BookSource getByFileName(String fileName);
 	public BookSource getByBook(Book book);

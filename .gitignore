@@ -6,3 +6,8 @@
 # Maven
 log/
 target/
+
+# png, jpg, jpeg pictures
+pictures/*.png
+pictures/*.jpg
+pictures/*.jpeg

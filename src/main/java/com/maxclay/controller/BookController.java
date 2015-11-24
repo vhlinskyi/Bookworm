@@ -5,11 +5,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLConnection;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
@@ -21,7 +24,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.maxclay.config.BookPicturesUploadProperties;
 import com.maxclay.dao.BookDao;
 import com.maxclay.dao.BookSourceDao;
 import com.maxclay.model.Book;
@@ -30,13 +35,21 @@ import com.maxclay.model.BookSource;
 @Controller
 public class BookController {
 	
-	public static final Resource PICTURES_DIR = new FileSystemResource("./pictures");
+	private final Resource picturesDir;
+	private final Resource defaultBookPicture;
+	
+	private final BookSourceDao bookSourceDao;
+	private final BookDao bookDao;
 	
 	@Autowired
-	BookSourceDao bookSourceDao;
-	
-	@Autowired
-	BookDao bookDao;
+	public BookController(BookSourceDao bookSourceDao, BookDao bookDao, 
+			BookPicturesUploadProperties uploadProperties) {
+		
+		this.bookSourceDao = bookSourceDao;
+		this.bookDao = bookDao;
+		picturesDir = uploadProperties.getUploadPath();
+		defaultBookPicture = uploadProperties.getDefaultBookPicture();
+	}
 	
 	@RequestMapping("/")
 	public String home(Model model) {
@@ -62,52 +75,55 @@ public class BookController {
 	}
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public String addBook(@ModelAttribute("book") Book book, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public String addBook(@ModelAttribute("book") Book book, HttpServletRequest request, 
+    		HttpServletResponse response, RedirectAttributes redirectAttrs) throws IOException {
     	
     	MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
     	
        	MultipartFile bookSourceFile = multipartRequest.getFile("file");
     	MultipartFile bookImageFile = multipartRequest.getFile("image");
-   
-    	   
-    	if(bookSourceFile != null)
-       		setSource(book, bookSourceFile);
+    	
+    	if (bookSourceFile.isEmpty() || !isPdf(bookSourceFile)) {
+    		
+    		redirectAttrs.addFlashAttribute("error", "Incorrect file. Please upload a PDF file.");
+    		return "redirect:/add";
+    	}
+    	//TODO change it? capability to upload only pdf file?
+    	if (bookImageFile.isEmpty() || !isImage(bookImageFile)) {
+    		
+    		redirectAttrs.addFlashAttribute("error", "Incorrect file. Please upload a picture.");
+    		return "redirect:/add";
+    	}
 
-       	if(bookImageFile != null) {
-
-       		String imageFilename = bookImageFile.getOriginalFilename();
-       		File tempFile = File.createTempFile("pic", getFileExtension(imageFilename), PICTURES_DIR.getFile());
-       		
-       		try (InputStream in = bookImageFile.getInputStream(); OutputStream out = new FileOutputStream(tempFile)) {
-       				
-       			IOUtils.copy(in, out);
-       			//TODO path setting
-       			//String path 
-       			//book.setPath();
-       			
-       		}
-       	}
-
+    	setSource(book, bookSourceFile);
+    	setImage(book, bookImageFile);
     	bookDao.add(book);
     	
         return "redirect:/";
     }
 	
 	 @RequestMapping(value = "/view", method = RequestMethod.GET)
-	 public String readBook(@RequestParam(required = true) String source,
-			 						HttpServletRequest request, 
-			 						HttpServletResponse response) {
-	     try {
+	 public void readBook(@RequestParam(required = true) String source,
+			 HttpServletRequest request, HttpServletResponse response) throws IOException {
+		 
+	     try(OutputStream out = response.getOutputStream()) {
 	    	 
 	         byte[] documentInBytes = bookSourceDao.get(source).getBookSourceInBytes();   
 	         response.setDateHeader("Expires", -1);
 	         response.setContentType("application/pdf");
 	         response.setContentLength(documentInBytes.length);
-	         response.getOutputStream().write(documentInBytes);
-	     } catch (Exception e) {
-	    	 e.printStackTrace();
+	         out.write(documentInBytes);
 	     }
-	     return null;
+	 }
+	 
+	 @RequestMapping(value = "/uploadedPicture")
+	 public void getUploadedPicture(@RequestParam(required = true) String id, HttpServletResponse response) throws IOException {
+	
+		 FileSystemResource pic = new FileSystemResource(bookDao.get(id).getPath());
+		 response.setHeader("Content-Type", URLConnection.guessContentTypeFromName(pic.getFilename()));
+		 IOUtils.copy(pic.getInputStream(), response.getOutputStream());	
+
+
 	 }
 
 	 private void setSource(Book book, MultipartFile bookSourceFile) throws IOException {
@@ -115,17 +131,31 @@ public class BookController {
 		 BookSource bookSource = new BookSource();
 		 bookSource.setFileName(bookSourceFile.getOriginalFilename());
 		 bookSource.setBookSourceInBytes(IOUtils.toByteArray(bookSourceFile.getInputStream()));
-			
-		 //bookSource.id == null
-		 bookSourceDao.add(bookSource);
-			
-		 //retrieving bookSource id from mongoDB => bookSource.id != null
-		 bookSource = bookSourceDao.getByFileName(bookSourceFile.getOriginalFilename());
+		 bookSource = bookSourceDao.add(bookSource);
 		 book.setSource(bookSource.getId());
 	 }
 	 
-	 private static String getFileExtension(String name) {
+	 private void setImage(Book book, MultipartFile imageFile) throws IOException {
 		 
+		 String fileExtension = getFileExtension(imageFile.getOriginalFilename());
+		 File tempFile = File.createTempFile("pic", fileExtension, picturesDir.getFile());
+		 
+		 try (InputStream in = imageFile.getInputStream(); OutputStream out = new FileOutputStream(tempFile)) {
+				 IOUtils.copy(in, out);
+				 book.setPath(new FileSystemResource(tempFile).getPath());
+		
+		 }
+	 }
+	 
+	 private static String getFileExtension(String name) {
 		 return name.substring(name.lastIndexOf("."));
+	 }
+	 
+	 private boolean isImage(MultipartFile file) {
+		 return file.getContentType().startsWith("image");
+	 }
+	 
+	 private boolean isPdf(MultipartFile file) {
+		 return file.getContentType().equals("application/pdf");
 	 }
 }

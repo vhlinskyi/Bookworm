@@ -29,10 +29,11 @@ public class BookSourceDaoImpl implements BookSourceDao{
 	}
 	
 	@Override
-	public void add(BookSource book) {
+	public BookSource add(BookSource book) {
 		
 		gridFsTemplate.store(new ByteArrayInputStream(book.getBookSourceInBytes()), book.getFileName());
 		
+		return getByFileName(book.getFileName());
 	}
 
 	@Override

@@ -99,7 +99,8 @@
 				    	<div class="media">
 				    		<div class="media-left">
 						    	<a th:href="@{/book?id=__${book.id}__}">
-				      				<img class="media-object" th:src="${book.path}"/>
+				      				<!--img class="media-object" th:src="${book.path}"/-->
+				      				<img class="media-object" th:src="@{/uploadedPicture?id=__${book.id}__}"/>
 							    </a>
 							 </div>
 				      		<div class="media-body">
