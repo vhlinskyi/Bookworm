@@ -66,14 +66,14 @@ public class BookSourceDaoImpl implements BookSourceDao{
 
 	@Override
 	public void delete(BookSource bookSource) {
-		gridFsTemplate.delete(Query.query(GridFsCriteria.whereFilename().is(bookSource.getFileName())));
+		if(bookSource.getId() != null && !bookSource.getId().equals(""))
+			delete(bookSource.getId());
 	}
 
 	@Override
 	public void delete(Book book) {
-		
-		gridFsTemplate.delete(new Query(Criteria.where("_id").is(book.getSource())));
-		
+		if(book.getSource() != null && !book.getSource().equals(""))
+			delete(book.getSource());
 	}
 	
 	private BookSource gridFileToBookSource(GridFSDBFile file) {
