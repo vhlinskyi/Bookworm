@@ -4,7 +4,7 @@
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extrasspringsecurity3">
 <head lang="en">
 	<meta charset="UTF-8"/>
-	<title>Bookworm</title>
+	<title>Sign up</title>
 
     <!-- Bootstrap Core CSS -->
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" media="screen" />
@@ -38,19 +38,7 @@
                 <a class="navbar-brand" href="/">Bookworm</a>
             </div>
             <!-- Top Menu Items -->
-            <ul class="nav navbar-right top-nav">
-                <li class="dropdown" sec:authorize="isAuthenticated()">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <b sec:authentication="name"/> <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a th:href="@{/logout}"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
-                        </li>
-                    </ul>
-                </li>
+            <ul class="nav navbar-right top-nav">            
                 <a th:href="@{/login}" class="navbar-brand" sec:authorize="hasRole('ROLE_ANONYMOUS')">Login</a>
                 <a th:href="@{/signup}" class="navbar-brand" sec:authorize="hasRole('ROLE_ANONYMOUS')">Sign up</a>
             </ul>
@@ -62,18 +50,12 @@
                     <li>
                         <a href="#"><i class="fa fa-fw fa-folder"></i> Categories</a>
                     </li>
-                    <li sec:authorize="isAuthenticated()">
-                        <a href="#"><i class="fa fa-fw fa-book"></i> My library</a>
-                    </li>
                     <li>
                         <a href="#"><i class="fa fa-fw fa-search"></i> Search</a>
                     </li>
                     
                     <li sec:authorize="isAuthenticated()">
                         <a href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
-                    </li>
-                    <li sec:authorize="hasRole('ROLE_ADMIN')">
-                        <a href="/add"><i class="fa fa-fw fa-wrench"></i> Management(Add Book)</a>
                     </li>
                     <li>
                         <a href="#"><i class="fa fa-fw fa-child"></i> Help</a>
@@ -93,32 +75,41 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h1 class="page-header">
-                            Popular  <small>The most rated books</small>
+                            Sign up  <small>Please enter information about yourself</small>
                         </h1>
-                        
                     </div>
                 </div>
+                
+                
 
-                <div class="media-list" >
-					<div class="book-item col-lg-12" th:each="book : ${books}">
-				    	<div class="media">
-				    		<div class="media-left">
-						    	<a th:href="@{/book?id=__${book.id}__}">
-				      				<!--img class="media-object" th:src="${book.path}"/-->
-				      				<img class="media-object" th:src="@{/uploadedPicture?id=__${book.id}__}"/>
-							    </a>
-							 </div>
-				      		<div class="media-body">
-						    <a th:href="@{/book?id=__${book.id}__}"><h4 th:text="${book.title}" class="media-heading">Book title</h4></a>
-						    <h5 th:text="@{Author: __${book.author}__}" class="media-heading">Book author</h5>
-						    <br/><p th:text="${book.description}">Book description</p>
-						    <br/><a th:href="@{/edit?id=__${book.id}__}" class="btn btn-warning" sec:authorize="hasRole('ROLE_ADMIN')">Edit</a>
-						    <a th:href="@{/delete?id=__${book.id}__}" class="btn btn-danger" sec:authorize="hasRole('ROLE_ADMIN')">Delete</a>
-						  </div>
-				    	</div>
-				  </div>
-				
-				</div>
+               	<form th:action="@{/signup}" method="post" th:object="${user}" >
+					<fieldset class="col-lg-10">
+						<div class="form-group">
+							<label for="title">Name: </label>
+						    <input class="form-control" type="text" th:field="*{name}" placeholder="Enter username" th:errorclass="invalid"/>
+							<div th:errors="*{name}" class="text-danger">Error</div>
+						</div>
+						<div class="form-group">
+							<label for="author">Email: </label>
+						    <input class="form-control" type="text" th:field="*{email}" placeholder="Enter email" th:errorclass="invalid"/>
+							<div th:errors="*{email}" class="text-danger">Error</div>
+						</div>
+						<div class="form-group">
+							<label for="year">Password: </label>
+						    <input class="form-control" type="password" th:field="*{password}" placeholder="Enter password" th:errorclass="invalid"/>
+							<div th:errors="*{password}" class="text-danger">Error</div>
+						</div>
+						<div class="form-group">
+							<label for="pages">Repeat password: </label>
+						    <input class="form-control" type="password" th:field="*{matchingPassword}" placeholder="Repeat password" th:errorclass="invalid"/>
+							<div th:errors="*{matchingPassword}" class="text-danger">Error</div>
+							<div th:errors="${user}" class="text-danger">Error</div>
+						</div>
+						<div class="submit">
+					    	<button class="btn btn-success" type="submit" name="save" >Submit</button>
+					    </div>
+					</fieldset>
+				</form>
 				
             </div>
 

@@ -51,6 +51,7 @@
                 </li>
                 
                 <a th:href="@{/login}" class="navbar-brand" sec:authorize="hasRole('ROLE_ANONYMOUS')">Login</a> 
+                <a th:href="@{/signup}" class="navbar-brand" sec:authorize="hasRole('ROLE_ANONYMOUS')">Sign up</a>
             </ul>
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
