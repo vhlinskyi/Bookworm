@@ -3,6 +3,9 @@ package com.maxclay.controller;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -47,8 +50,9 @@ public class ProfileController {
 			return "/signup";
 		}
 		
+		Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(), null, user.roles());
+		SecurityContextHolder.getContext().setAuthentication(auth);
 		
-		System.out.println(user);
 		return "redirect:/";
 	}
 	

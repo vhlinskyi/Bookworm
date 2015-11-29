@@ -5,12 +5,15 @@ import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 
 @SuppressWarnings("serial")
 @Document(collection = User.COLLECTION_NAME)
 public class User implements Serializable {
 	
 	public static final String COLLECTION_NAME = "users";
+	public static final String DEFAULT_USER_ROLE = "ROLE_USER";
 	
 	@Id
 	private String id;
@@ -78,6 +81,15 @@ public class User implements Serializable {
 	 
 	 public boolean getEnabled() {
 		 return enabled;
+	 }
+	 
+	 public List<GrantedAuthority> roles() {
+		 
+		 String roles = "";
+		 for(String role : getRoles())
+			 roles += role + ",";
+			
+		 return AuthorityUtils.commaSeparatedStringToAuthorityList(roles);
 	 }
 	 
 	 @Override
