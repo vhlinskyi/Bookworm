@@ -53,26 +53,26 @@ public class BookController {
 	}
 	
 	@RequestMapping(value = "/uploadedPicture")
-	 public void getUploadedPicture(@RequestParam(required = true) String id, HttpServletResponse response) throws IOException {
+	public void getUploadedPicture(@RequestParam(required = true) String id, HttpServletResponse response) throws IOException {
 		 
-		 Resource pic;
-		 String path = bookDao.get(id).getPath();
+		Resource pic;
+		String path = bookDao.get(id).getPath();
 		 
-		 pic = (path != null) ? new FileSystemResource(path) : defaultBookPicture;
+		pic = (path != null) ? new FileSystemResource(path) : defaultBookPicture;
+		
+		if(!pic.exists())
+			pic = defaultBookPicture;
 		 
-		 if(!pic.exists())
-			 pic = defaultBookPicture;
+		response.setHeader("Content-Type", URLConnection.guessContentTypeFromName(pic.getFilename()));
 		 
-		 response.setHeader("Content-Type", URLConnection.guessContentTypeFromName(pic.getFilename()));
-		 
-		 OutputStream out = response.getOutputStream();
-		 InputStream in = pic.getInputStream();
-		 IOUtils.copy(in, out);
+		OutputStream out = response.getOutputStream();
+		InputStream in = pic.getInputStream();
+		IOUtils.copy(in, out);
 
-		 in.close();
-		 out.close();
-
-	 }
+		in.close();
+		out.close();
+		
+	}
 	
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
 	public ModelAndView showAddForm() {

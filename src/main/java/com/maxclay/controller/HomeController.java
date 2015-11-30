@@ -60,6 +60,6 @@ public class HomeController {
 	         response.setContentLength(documentInBytes.length);
 	         out.write(documentInBytes);
 	     }
-	 } 
+	 }
 	 
 }
