@@ -1,6 +1,9 @@
 package com.maxclay.model;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -19,19 +22,30 @@ public class User implements Serializable {
 	private String email;
 	private String password;
 	private String picture;
+	private String registrationDate;
+	private String info;
 	private List<String> roles;
 	private boolean enabled;
 	
 	 public User() {
+		 
 		 this.picture = "";
+		 this.info = "";
+		 
+		 DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+		 Date date = new Date();
+		 this.registrationDate = dateFormat.format(date);
 	 }
 
-	 public User(String name, String email, String password, String picture, List<String> roles, boolean enabled) {
+	 public User(String name, String email, String password, String picture, 
+			 String registrationDate, String info, List<String> roles, boolean enabled) {
 		 
 		 this.name = name;
 		 this.email = email;
 		 this.password = password;
 		 this.picture = picture;
+		 this.registrationDate = registrationDate;
+		 this.info = info;
 		 this.roles = roles;
 		 this.enabled = enabled;
 	 }
@@ -76,6 +90,22 @@ public class User implements Serializable {
 		 return picture;
 	 }
 	 
+	 public void setRegistrationDate(String registrationDate) {
+		 this.registrationDate = registrationDate;
+	 }
+	 
+	 public String getRegistrationDate() {
+		 return registrationDate;
+	 }
+	 
+	 public void setInfo(String info) {
+		 this.info = info;
+	 }
+	 
+	 public String getInfo() {
+		 return info;
+	 }
+	 
 	 public void setRoles(List<String> roles) {
 		 this.roles = roles;
 	 }
@@ -96,8 +126,9 @@ public class User implements Serializable {
 	 public String toString() {
 		 return String.format(
 				 "User [\n id=%s,\n name='%s',\n email='%s'"
-				 + ",\n password='%s', \n picture='%s',\n first_role='%s'\n enabled='%b']",
-				 id, name, email, password, picture, roles.get(0), enabled);
+				 + ",\n password='%s', \n picture='%s', \nregistration_date='%s', "
+				 + "\ninfo='%s',\n first_role='%s'\n enabled='%b']",
+				 id, name, email, password, picture, registrationDate, info, roles.get(0), enabled);
 	    }
 
 }

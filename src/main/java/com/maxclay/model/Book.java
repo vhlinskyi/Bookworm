@@ -1,6 +1,8 @@
 package com.maxclay.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -24,11 +26,13 @@ public class Book implements Serializable {
     
     private String path;
     
+    private List<Comment> comments;
+    
     public Book() {
     }
 
     public Book(String source, String title, String author, short year, short pages, 
-    			String language, String description, String path) {
+    			String language, String description, String path, List<Comment> comments) {
         
     	this.source = source;
     	this.title = title;
@@ -38,6 +42,7 @@ public class Book implements Serializable {
         this.language = language;
         this.description = description;
         this.path = path;
+        this.comments = comments;
 
     }
 
@@ -111,6 +116,22 @@ public class Book implements Serializable {
 
     public void setPath(String path) {
         this.path = path;
+    }
+    
+    public void setComments(List<Comment> comments) {
+    	this.comments = comments;
+    }
+    
+    public List<Comment> getComments() {
+    	return comments;
+    }
+    
+    public void addComment(Comment comment) {
+    	
+    	if(comments == null)
+    		comments = new ArrayList<Comment>();
+    	
+    	comments.add(comment);
     }
 
     @Override

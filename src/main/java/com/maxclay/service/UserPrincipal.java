@@ -12,6 +12,7 @@ import com.maxclay.model.User;
 public class UserPrincipal extends User implements UserDetails {
 	
 	public UserPrincipal(User user) {
+		
 		super.setEmail(user.getEmail());
 		super.setEnabled(user.getEnabled());
 		super.setId(user.getId());
@@ -19,6 +20,8 @@ public class UserPrincipal extends User implements UserDetails {
 		super.setPassword(user.getPassword());
 		super.setRoles(user.getRoles());
 		super.setPicture(user.getPicture());
+		super.setRegistrationDate(user.getRegistrationDate());
+		super.setInfo(user.getInfo());
 	}
 
 	@Override

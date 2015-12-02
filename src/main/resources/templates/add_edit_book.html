@@ -103,12 +103,11 @@
 
 				<form th:action="@{/__${action}__}" method="post" th:object="${book}" enctype="multipart/form-data">
 					<fieldset class="col-lg-10">
-						<input type="hidden" th:field="*{id}" />
-						<input type="hidden" th:field="*{source}" />
-						<input type="hidden" th:field="*{path}" />			
+						<input type="hidden" th:field="*{id}" />		
 						<div class="form-group">
 							<label for="title">Title: </label>
-						    <input class="form-control" type="text" th:field="*{title}" placeholder="Enter title" />
+						    <input class="form-control" type="text" th:field="*{title}" placeholder="Enter title" th:errorclass="invalid"/>
+							<div th:errors="*{title}" class="text-danger">Error</div>
 						</div>
 						<div class="form-group">
 							<label for="author">Author: </label>

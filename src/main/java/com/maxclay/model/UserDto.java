@@ -1,4 +1,4 @@
-package com.maxclay.service;
+package com.maxclay.model;
 
 import javax.validation.constraints.NotNull;
 

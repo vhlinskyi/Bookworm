@@ -31,7 +31,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.maxclay.config.UserPicturesUploadProperties;
 import com.maxclay.model.User;
-import com.maxclay.service.UserDto;
+import com.maxclay.model.UserDto;
 import com.maxclay.service.UserPrincipal;
 import com.maxclay.service.UserService;
 

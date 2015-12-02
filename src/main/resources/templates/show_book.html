@@ -1,7 +1,13 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extrasspringsecurity3">
 <head lang="en">
 	<meta charset="UTF-8"/>
+	<meta name="_csrf" th:content="${_csrf.token}"/>
+	<!-- default header name is X-CSRF-TOKEN -->
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+	
 	<title th:text="${book.title}">Bookworm</title>
 
     <!-- Bootstrap Core CSS -->
@@ -16,10 +22,15 @@
 
     <!-- Custom Fonts -->
     <link th:href="@{/font-awesome/css/font-awesome.min.css}" rel="stylesheet" type="text/css"/>
+    	
+    
 
 </head>
 
-<body>
+<body onload="loadComments()">
+
+    <!-- jQuery -->
+    <script th:src="@{/js/jquery.js}"></script>
    
     <div id="wrapper">
 
@@ -39,7 +50,7 @@
             <ul class="nav navbar-right top-nav">
                 <li class="dropdown" sec:authorize="isAuthenticated()">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" ><i class="fa fa-user"></i> 
-                    <b sec:authentication="principal.name"/> <b class="caret"></b></a>
+                    <b sec:authentication="principal.name"/><b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li>
                             <a href="/profile"><i class="fa fa-fw fa-user"></i> Profile</a>
@@ -90,7 +101,7 @@
             <div class="container-fluid">
 
                 <!-- Page Heading -->
-                <div class="row">
+                <div class="row" th:attr="data-id=${book.id}" id="bookTitle">
                     <div class="col-lg-12">
                         <h2 th:text="${book.title}" class="page-header"></h2>
                     </div>
@@ -117,28 +128,83 @@
             	</div>
 				
 				<div class="row">
-				<h4 class="page-header">Comments:</h4>
-				<!--form>
-					<fieldset>
-						<div class="form-group">
-							<label for="description">Description: </label>
-							<textarea class="form-control" rows="3" th:field="" placeholder="Enter description" ></textarea>
-						</div>
-						<div class="submit">
-					    	<button class="btn btn-success" type="submit" name="save" >Submit</button>
-					    </div>
-					</fieldset>
-				</form-->
+					<h4 class="page-header">Comments:</h4>
+					<div class="col-lg-5">
+						<form  id="commentForm" sec:authorize="isAuthenticated()">
+							<div class="form-group">
+								<textarea class="form-control" rows="2" id='commentText'></textarea>
+							</div>
+							<div class="submit">
+				            	<input type="submit" class="btn btn-success" value="Send" />
+				            </div>
+				        </form>
+				        <div id="commentsBlock"></div>
+			        </div>
 				</div>
             </div>
 
         </div>
         
-    </div>			
+    </div>		
+	
+	<script>
+        
+        function loadComments() {
+        	
+        	var url = '/book/comment?bookId=' + $("#bookTitle").attr("data-id");
+        	$("#commentsBlock").load(url);
+        	$("#commentText").val('');
+        }
+        
+        
+        
+        $("#commentForm").submit(function(event) {
+        	event.preventDefault();
+        	
+        	var $form = $(this),
+					text = $form.find('textarea[id="commentText"]').val();
+        	
+        	if(text.trim()) {
+        	
+	        	var token = $("meta[name='_csrf']").attr("content");
+	            var header = $("meta[name='_csrf_header']").attr("content");
+	            var bookId = $("#bookTitle").attr("data-id");
+		
+	            var comment = {}
+	                comment["text"] = text;
+	                comment["author"] = "";
+	                comment["date"] = "";
+	           
+	     		$(document).ajaxSend(function(e, xhr, options) {
+	     			xhr.setRequestHeader(header, token);
+	     			
+	     		});
+	     		
+	     		$.ajax({
+	     			
+	     			url: "/book/comment?bookId=" + bookId,
+					contentType : "application/json",
+					method: 'POST',
+					data : JSON.stringify(comment),
+					dataType : 'json',
+					cache: false, // Force requested pages not to be cached by the browser
+					processData: false, // Avoid making query string instead of JSON
+					success: function(data, textStatus, jqXHR) {
+						   
+						loadComments();
+					},
+					error:function(xhr, exception) {
+	
+					    loadComments();
+					}
+					
+	     		});
+        	}
+     		
+        });
+        
+	</script>	
            
-    <!-- jQuery -->
-    <script th:src="@{/js/jquery.js}"></script>
-
     <!-- Bootstrap Core JavaScript -->
     <script th:src="@{/js/bootstrap.min.js}"></script>
 

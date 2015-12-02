@@ -28,10 +28,11 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.maxclay.config.BookPicturesUploadProperties;
-import com.maxclay.dao.BookDao;
 import com.maxclay.dao.BookSourceDao;
 import com.maxclay.model.Book;
+import com.maxclay.model.BookDto;
 import com.maxclay.model.BookSource;
+import com.maxclay.service.BookService;
 
 @Controller
 public class BookController {
@@ -40,14 +41,14 @@ public class BookController {
 	private final Resource defaultBookPicture;
 	
 	private final BookSourceDao bookSourceDao;
-	private final BookDao bookDao;
+	private final BookService bookService;
 	
 	@Autowired
-	public BookController(BookSourceDao bookSourceDao, BookDao bookDao, 
+	public BookController(BookSourceDao bookSourceDao, BookService bookService, 
 			BookPicturesUploadProperties uploadProperties) {
 		
 		this.bookSourceDao = bookSourceDao;
-		this.bookDao = bookDao;
+		this.bookService = bookService;
 		picturesDir = uploadProperties.getUploadPath();
 		defaultBookPicture = uploadProperties.getDefaultBookPicture();
 	}
@@ -56,7 +57,7 @@ public class BookController {
 	public void getUploadedPicture(@RequestParam(required = true) String id, HttpServletResponse response) throws IOException {
 		 
 		Resource pic;
-		String path = bookDao.get(id).getPath();
+		String path = bookService.get(id).getPath();
 		 
 		pic = (path != null) ? new FileSystemResource(path) : defaultBookPicture;
 		
@@ -77,15 +78,15 @@ public class BookController {
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
 	public ModelAndView showAddForm() {
 		
-		ModelAndView modelAndView = new ModelAndView("add_edit_book", "book", new Book());
+		ModelAndView modelAndView = new ModelAndView("add_edit_book", "book", new BookDto());
 		modelAndView.addObject("action", "add");
 		return modelAndView;
 	}
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public String addBook(@ModelAttribute("book") Book book, HttpServletRequest request, 
+    public String addBook(@ModelAttribute("book") BookDto bookDto, HttpServletRequest request, 
     		HttpServletResponse response, RedirectAttributes redirectAttrs) throws IOException {
-    	
+
     	MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
     	
        	MultipartFile bookSourceFile = multipartRequest.getFile("file");
@@ -103,25 +104,26 @@ public class BookController {
     		return "redirect:/add";
     	}
     	
-    	
+    	Book book = bookService.add(bookDto);
     	setSource(book, bookSourceFile);
     	setImage(book, bookImageFile);
-    	book.setId(null);
-    	bookDao.add(book);
+    	//book.setId(null);
+    	bookService.add(book);
     	
         return "redirect:/";
     }
     
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
     public ModelAndView showBookEditForm(@RequestParam(required = true) String id) {
-
-    	ModelAndView modelAndView = new ModelAndView("add_edit_book", "book", bookDao.get(id));
+    	
+    	BookDto bookDto = new BookDto(bookService.get(id));
+    	ModelAndView modelAndView = new ModelAndView("add_edit_book", "book", bookDto);
 		modelAndView.addObject("action", "edit");
 		return modelAndView;
     }
     
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public ModelAndView editBook(@ModelAttribute("book") Book book, HttpServletRequest request, 
+    public ModelAndView editBook(@ModelAttribute("book") BookDto bookDto, HttpServletRequest request, 
     		HttpServletResponse response) throws IOException {
     	
     	MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
@@ -139,16 +141,17 @@ public class BookController {
     	if(!error.equals("")) {
     		
     		ModelAndView modelAndView = new ModelAndView("add_edit_book");
-    		modelAndView.addObject("book", book);
+    		modelAndView.addObject("book", bookDto);
     		modelAndView.addObject("action", "edit");
     		modelAndView.addObject("error", error);
     		return modelAndView;
     	}
     	
+    	Book book = bookService.update(bookDto);
     	setSource(book, bookSourceFile);
     	setImage(book, bookImageFile);
     	
-    	bookDao.add(book);
+    	bookService.update(book);
     	
         return new ModelAndView("redirect:/");
     }
@@ -156,13 +159,13 @@ public class BookController {
     @RequestMapping(value = "/delete", method = RequestMethod.GET)
     public String deleteBook(@RequestParam(required = true) String id) throws IOException {
     	
-    	Book book = bookDao.get(id);
+    	Book book = bookService.get(id);
   
     	if(book.getPath() != null && !book.getPath().equals(""))
     		deleteBookPicture(book);
 
     	bookSourceDao.delete(book);
-    	bookDao.delete(book);
+    	bookService.delete(book);
     	
         return "redirect:/";
     }
@@ -196,7 +199,7 @@ public class BookController {
 					 book.setPath(new FileSystemResource(tempFile).getPath());
 			 }
 		 }
-	 }
+	 }	 
 	 
 	 private void deleteBookPicture(Book book) throws IOException {
 		 Path path = Paths.get(book.getPath());
@@ -216,5 +219,5 @@ public class BookController {
 	
 		 return file.getContentType().equals("application/pdf");
 	 }
-
+	 
 }

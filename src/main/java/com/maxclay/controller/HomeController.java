@@ -14,35 +14,37 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.maxclay.config.BookPicturesUploadProperties;
-import com.maxclay.dao.BookDao;
 import com.maxclay.dao.BookSourceDao;
 import com.maxclay.model.Book;
+import com.maxclay.service.BookService;
+import com.maxclay.service.UserService;
 
 @Controller
 public class HomeController {
 	
 	private final BookSourceDao bookSourceDao;
-	private final BookDao bookDao;
-	
+	private final BookService bookService;
+		
 	@Autowired
-	public HomeController(BookSourceDao bookSourceDao, BookDao bookDao, 
-			BookPicturesUploadProperties uploadProperties) {
+	public HomeController(BookSourceDao bookSourceDao, BookService bookService, 
+			BookPicturesUploadProperties uploadProperties, UserService userService) {
 		
 		this.bookSourceDao = bookSourceDao;
-		this.bookDao = bookDao;
+		this.bookService = bookService;
+		
 	}
 	
 	@RequestMapping("/")
 	public String home(Model model) {
 		
-		model.addAttribute("books", bookDao.getAll());
+		model.addAttribute("books", bookService.getAll());
 		return "index";
 	}
 	
 	@RequestMapping("/book")
 	public String showBook(@RequestParam(required = true) String id, Model model) {
         
-		Book book = bookDao.get(id);
+		Book book = bookService.get(id);
 		model.addAttribute("book", book);
 		
 		return "show_book";

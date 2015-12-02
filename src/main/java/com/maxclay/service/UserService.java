@@ -1,6 +1,7 @@
 package com.maxclay.service;
 
 import com.maxclay.model.User;
+import com.maxclay.model.UserDto;
 
 public interface UserService {
 	

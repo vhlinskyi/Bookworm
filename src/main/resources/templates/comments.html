@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+</head>
+
+<body>
+    <div th:fragment="commentsList" th:unless="${#lists.isEmpty(comments)}" class="results-block">
+		<table>
+			<thead>
+		    	<tr>
+					<th>Data</th>
+		            <th>Author</th>
+		            <th>Text</th>
+		      	</tr>
+		 	</thead>
+		    <tbody>
+		    	<tr th:each="comment : ${comments}">
+		        	<td th:text="${comment.date}">date</td>
+		            <td th:text="${comment.author}">author</td>
+		            <td th:text="${comment.text}">text</td>
+		   		</tr>
+			 </tbody>
+		</table>
+	</div>
+</body>
+</html>

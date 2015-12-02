@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.maxclay.dao.UserDao;
 import com.maxclay.model.User;
+import com.maxclay.model.UserDto;
 
 @Service
 public class UserServiceImpl implements UserService {

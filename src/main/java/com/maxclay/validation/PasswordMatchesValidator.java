@@ -3,7 +3,7 @@ package com.maxclay.validation;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import com.maxclay.service.UserDto;
+import com.maxclay.model.UserDto;
 
 public class PasswordMatchesValidator implements ConstraintValidator<PasswordMatches, Object> {
 
