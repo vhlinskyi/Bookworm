@@ -131,7 +131,7 @@ public class Book implements Serializable {
     	if(comments == null)
     		comments = new ArrayList<Comment>();
     	
-    	comments.add(comment);
+    	comments.add(0, comment);
     }
 
     @Override

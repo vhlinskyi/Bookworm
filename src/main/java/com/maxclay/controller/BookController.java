@@ -29,8 +29,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.maxclay.config.BookPicturesUploadProperties;
 import com.maxclay.dao.BookSourceDao;
+import com.maxclay.dto.BookDto;
 import com.maxclay.model.Book;
-import com.maxclay.model.BookDto;
 import com.maxclay.model.BookSource;
 import com.maxclay.service.BookService;
 
@@ -107,7 +107,6 @@ public class BookController {
     	Book book = bookService.add(bookDto);
     	setSource(book, bookSourceFile);
     	setImage(book, bookImageFile);
-    	//book.setId(null);
     	bookService.add(book);
     	
         return "redirect:/";

@@ -10,8 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.maxclay.dao.UserDao;
+import com.maxclay.dto.UserDto;
 import com.maxclay.model.User;
-import com.maxclay.model.UserDto;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -52,9 +52,10 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public void save(User user) {
+	public User save(User user) {
 		
 		userDao.add(user);
+		return get(user.getId());
 	}
 
 	@Override

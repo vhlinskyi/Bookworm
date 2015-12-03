@@ -30,8 +30,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.maxclay.config.UserPicturesUploadProperties;
+import com.maxclay.dto.UserDto;
 import com.maxclay.model.User;
-import com.maxclay.model.UserDto;
 import com.maxclay.service.UserPrincipal;
 import com.maxclay.service.UserService;
 
@@ -92,7 +92,7 @@ public class ProfileController {
 	 }
 	 
 	 @RequestMapping(value = "/profile/edit", method = RequestMethod.POST)
-	 public ModelAndView editBook(@ModelAttribute("user") User user, MultipartFile file) throws IOException {
+	 public ModelAndView editUser(@ModelAttribute("user") User user, MultipartFile file) throws IOException {
 		 
 		 if (!file.isEmpty() && !isImage(file)) {	    	
 	    		
@@ -105,7 +105,7 @@ public class ProfileController {
 		 setImage(user, file);
 		 userService.save(user);
 		 login(user);
-	    	
+		 	    	
 		 return new ModelAndView("redirect:/profile/");
 		 
 	 }
@@ -158,8 +158,9 @@ public class ProfileController {
 	 }
 	 
 	 private void login(User user) {
+		 
 		 UserPrincipal userPrincipal = new UserPrincipal(user);
-		 Authentication auth = new UsernamePasswordAuthenticationToken(userPrincipal, null);
+		 Authentication auth = new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
 		 SecurityContextHolder.getContext().setAuthentication(auth);
 	 }
 	

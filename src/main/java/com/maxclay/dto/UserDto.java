@@ -1,4 +1,4 @@
-package com.maxclay.model;
+package com.maxclay.dto;
 
 import javax.validation.constraints.NotNull;
 

@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.maxclay.dao.BookDao;
+import com.maxclay.dto.BookDto;
 import com.maxclay.model.Book;
-import com.maxclay.model.BookDto;
 
 @Service
 public class BookServiceImpl implements BookService {

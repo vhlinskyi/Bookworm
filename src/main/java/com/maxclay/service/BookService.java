@@ -2,8 +2,8 @@ package com.maxclay.service;
 
 import java.util.List;
 
+import com.maxclay.dto.BookDto;
 import com.maxclay.model.Book;
-import com.maxclay.model.BookDto;
 
 public interface BookService {
 	

@@ -236,3 +236,32 @@ object {
 	width : 90%;
 	height: 600px;
 }
+
+.panel-body, .panel-title, .commentText {
+	
+	margin-top : 1px;
+	padding-top : 1px;
+	margin-bottom : 1px;
+	padding-bottom : 1px;
+	
+	
+}
+
+.panel {
+	margin-bottom : 5px;
+}
+
+.panel-heading {
+	
+	padding-bottom : 2px;
+	padding-top : 2px;
+	
+}
+
+.commentDate {
+	font-size: 80%;
+}
+
+textarea {
+    resize: none;
+}

@@ -1,4 +1,6 @@
-package com.maxclay.model;
+package com.maxclay.dto;
+
+import com.maxclay.model.Book;
 
 public class BookDto {
 	
