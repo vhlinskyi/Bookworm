@@ -3,6 +3,7 @@ package com.maxclay.model;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class User implements Serializable {
 	private String info;
 	private List<String> roles;
 	private boolean enabled;
+	private List<String> books;
 	
 	 public User() {
 		 
@@ -37,7 +39,7 @@ public class User implements Serializable {
 		 this.registrationDate = dateFormat.format(date);
 	 }
 
-	 public User(String name, String email, String password, String picture, 
+	 public User(String name, String email, String password, String picture, List<String> books,
 			 String registrationDate, String info, List<String> roles, boolean enabled) {
 		 
 		 this.name = name;
@@ -48,6 +50,7 @@ public class User implements Serializable {
 		 this.info = info;
 		 this.roles = roles;
 		 this.enabled = enabled;
+		 this.books = books;
 	 }
 	 
 	 public void setId(String id) {
@@ -114,12 +117,28 @@ public class User implements Serializable {
 		 return roles;
 	 }
 	 
+	 public void setBooks(List<String> books) {
+		 this.books = books;
+	 }
+	 
+	 public List<String> getBooks() {
+		 return books;
+	 }
+	 
 	 public void setEnabled(boolean enabled) {
 		 this.enabled = enabled;
 	 }
 	 
 	 public boolean getEnabled() {
 		 return enabled;
+	 }
+	 
+	 public void addBook(String bookId) {
+		 
+		 if(books == null)
+			 books = new ArrayList<String>();
+		 
+		 books.add(0, bookId);
 	 }
 	 
 	 @Override

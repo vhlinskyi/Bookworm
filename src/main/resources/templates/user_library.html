@@ -4,7 +4,7 @@
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extrasspringsecurity3">
 <head lang="en">
 	<meta charset="UTF-8"/>
-	<title>Bookworm</title>
+	<title>My library</title>
 
     <!-- Bootstrap Core CSS -->
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" media="screen" />
@@ -52,18 +52,16 @@
                         </li>
                     </ul>
                 </li>
-                <a th:href="@{/login}" class="navbar-brand" sec:authorize="hasRole('ROLE_ANONYMOUS')">Login</a>
-                <a th:href="@{/signup}" class="navbar-brand" sec:authorize="hasRole('ROLE_ANONYMOUS')">Sign up</a>
             </ul>
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
-                    <li class="active">
+                    <li>
                         <a href="/"><i class="fa fa-fw fa-star"></i> Popular books</a>
                     </li>
                     <li>
                         <a href="#"><i class="fa fa-fw fa-folder"></i> Categories</a>
                     </li>
-                    <li sec:authorize="isAuthenticated()">
+                    <li class="active">
                         <a href="/library"><i class="fa fa-fw fa-book"></i> My library</a>
                     </li>
                     <li>
@@ -94,7 +92,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h1 class="page-header">
-                            Popular  <small>The most rated books</small>
+                            My library
                         </h1>
                         
                     </div>
@@ -105,25 +103,14 @@
 				    	<div class="media">
 				    		<div class="media-left">
 						    	<a th:href="@{/book?id=__${book.id}__}">
-				      				<!--img class="media-object" th:src="${book.path}"/-->
 				      				<img class="media-object" th:src="@{/uploadedPicture?id=__${book.id}__}"/>
-							    </a>							    
+							    </a>
 							 </div>
 				      		<div class="media-body">
 						    <a th:href="@{/book?id=__${book.id}__}"><h4 th:text="${book.title}" class="media-heading">Book title</h4></a>
 						    <h5 th:text="@{Author: __${book.author}__}" class="media-heading">Book author</h5>
 						    <br/><p th:text="${book.description}">Book description</p>
-						    
-						    <br/><a th:unless="${#lists.contains(list, &quot;__${book.id}__&quot;)}" 
-						    	th:href="@{/library/add?id=__${book.id}__}" 
-						    	class="btn btn-success" 
-						    	sec:authorize="isAuthenticated()">
-						    		Add to library		
-						    </a>
-						    <a th:if="${#lists.contains(list, &quot;__${book.id}__&quot;)}" sec:authorize="isAuthenticated()">
-						    		Book has already been added to library		
-						    </a>	    
-						    <a th:href="@{/edit?id=__${book.id}__}" class="btn btn-warning" sec:authorize="hasRole('ROLE_ADMIN')">Edit</a>
+						    <br/><a th:href="@{/edit?id=__${book.id}__}" class="btn btn-warning" sec:authorize="hasRole('ROLE_ADMIN')">Edit</a>
 						    <a th:href="@{/delete?id=__${book.id}__}" class="btn btn-danger" sec:authorize="hasRole('ROLE_ADMIN')">Delete</a>
 						  </div>
 				    	</div>

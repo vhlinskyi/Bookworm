@@ -88,7 +88,7 @@ public class ProfileController {
 	 @RequestMapping(value = "/profile/edit", method = RequestMethod.GET)
 	 public ModelAndView showEditUserProfileFrom() {
 		 
-		 return new ModelAndView("edit_profile", "user", currentUser()); 
+		 return new ModelAndView("edit_profile", "user", authenticatedUser()); 
 	 }
 	 
 	 @RequestMapping(value = "/profile/edit", method = RequestMethod.POST)
@@ -114,7 +114,7 @@ public class ProfileController {
 	 public void getUploadedPicture(HttpServletResponse response) throws IOException {
 		 
 		 Resource pic;
-		 User user = currentUser();
+		 User user = authenticatedUser();
 		 String path = user.getPicture();
 		 
 		 pic = (path != null) ? new FileSystemResource(path) : defaultUserPicture;
@@ -150,7 +150,7 @@ public class ProfileController {
 		 }
 	 }
 	 
-	 private User currentUser() {
+	 public static User authenticatedUser() {
 		 
 		 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		 User user = (User) auth.getPrincipal();

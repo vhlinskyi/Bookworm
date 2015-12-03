@@ -22,6 +22,7 @@ public class UserPrincipal extends User implements UserDetails {
 		super.setPicture(user.getPicture());
 		super.setRegistrationDate(user.getRegistrationDate());
 		super.setInfo(user.getInfo());
+		super.setBooks(user.getBooks());
 	}
 
 	@Override
