@@ -1,5 +1,7 @@
 package com.maxclay.service;
 
+import java.util.List;
+
 import com.maxclay.dto.UserDto;
 import com.maxclay.model.User;
 
@@ -9,6 +11,7 @@ public interface UserService {
 	public User save(User user);
 	public User get(String id);
 	public User getByEmail(String email);
+	public List<User> getAll();
 	public void delete(User user);
 	public void delete(String id);
 	

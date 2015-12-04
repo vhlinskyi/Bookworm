@@ -42,7 +42,7 @@ public class BookController {
 	
 	private final BookSourceDao bookSourceDao;
 	private final BookService bookService;
-	
+		
 	@Autowired
 	public BookController(BookSourceDao bookSourceDao, BookService bookService, 
 			BookPicturesUploadProperties uploadProperties) {

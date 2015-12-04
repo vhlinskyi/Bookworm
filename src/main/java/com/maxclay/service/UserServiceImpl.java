@@ -46,7 +46,8 @@ public class UserServiceImpl implements UserService {
 		roles.add(User.DEFAULT_USER_ROLE);
 		user.setRoles(roles);
 		
-		userDao.add(user);
+		if(userDao.getByEmail(user.getEmail()) == null)
+			userDao.add(user);
 		
 		return userDao.getByEmail(user.getEmail());
 	}
@@ -85,6 +86,11 @@ public class UserServiceImpl implements UserService {
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 	    return new BCryptPasswordEncoder();
+	}
+
+	@Override
+	public List<User> getAll() {
+		return userDao.getAll();
 	}
 
 }

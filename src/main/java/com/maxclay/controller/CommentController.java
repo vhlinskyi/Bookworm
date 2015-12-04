@@ -28,7 +28,7 @@ public class CommentController {
 	public @ResponseBody Object createComment(@RequestBody final Comment comment, @RequestParam(required = true) String bookId) {
 	     
 		comment.initDate();
-		comment.setAuthor(ProfileController.authenticatedUser().getName());
+		comment.setAuthor(ProfileController.getAuthenticatedUser().getName());
 		
 	    Book book = bookService.get(bookId);
 	    book.addComment(comment);

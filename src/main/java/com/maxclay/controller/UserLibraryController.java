@@ -1,6 +1,7 @@
 package com.maxclay.controller;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,30 +33,77 @@ public class UserLibraryController {
 	@RequestMapping("/library")
 	public String library(Model model) {
 		
-		List<Book> books = new ArrayList<Book>();
-		
-		System.out.println(ProfileController.authenticatedUser());
-		User user = userService.get(ProfileController.authenticatedUser().getId());
-		System.out.println(user);
-		
-		for(String bookId  : user.getBooks())
-			books.add(bookService.get(bookId));
-		
-		model.addAttribute("books", books);
+		model.addAttribute("books", getUsersBooks());
 		return "user_library";
 	}
 	
 	@RequestMapping(value = "/library/add", method = RequestMethod.GET)
 	public String addBookToLibrary(@RequestParam(required = true) String id) {
 		
-		//TODO re login user and retrieve data from UserPrincipal instance?
-		User user = userService.get(ProfileController.authenticatedUser().getId());
-		
-		user.addBook(id);
+		User user = (User) ProfileController.getAuthenticatedUser();
+		if(user.getBooks() == null || !user.getBooks().contains(id))
+			user.addBook(id);
 		
 		userService.save(user);
+		ProfileController.authenticateUser(user);
 		
 		return "redirect:/";
+	}
+	
+	@RequestMapping(value = "/library/delete", method = RequestMethod.GET)
+	public String deleteBookFromLibrary(@RequestParam(required = true) String id) {
+		
+		delete(id);		
+		return "redirect:/library";
+	}
+	
+	private void delete(String bookId) {
+		
+		User user = ProfileController.getAuthenticatedUser();
+		user.getBooks().remove(bookId);
+		
+		userService.save(user);
+		ProfileController.authenticateUser(user);
+	}
+	
+	public List<Book> getUsersBooks() {
+		
+		List<Book> books = new ArrayList<Book>();
+		User user = ProfileController.getAuthenticatedUser();
+		List<String> usersBooks = user.getBooks();
+		if(usersBooks == null)
+			return books;
+		int sizeBefore = usersBooks.size();
+		for(Iterator<String> bookIter = usersBooks.iterator(); bookIter.hasNext();){
+			String bookId = bookIter.next();
+			if(bookService.get(bookId) != null && !bookService.get(bookId).equals(""))
+				books.add(bookService.get(bookId));
+			else
+				bookIter.remove();
+				
+		}
+		
+		if(usersBooks.size() != user.getBooks().size())
+			updateUsersBooks(books);
+		if(sizeBefore != usersBooks.size()) {
+			System.out.println("Second checking!");
+			updateUsersBooks(books);
+		}
+		
+		return books;
+	}
+
+	private void updateUsersBooks(List<Book> books) {
+		
+		System.out.println("In method!");
+		List<String> changedList = new ArrayList<String>();
+		for(Book b : books)
+			changedList.add(b.getId());
+		
+		User user = ProfileController.getAuthenticatedUser();
+		user.setBooks(changedList);
+		userService.save(user);
+		ProfileController.authenticateUser(user);
 	}
 	
 }

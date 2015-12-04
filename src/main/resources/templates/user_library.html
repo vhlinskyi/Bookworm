@@ -110,8 +110,8 @@
 						    <a th:href="@{/book?id=__${book.id}__}"><h4 th:text="${book.title}" class="media-heading">Book title</h4></a>
 						    <h5 th:text="@{Author: __${book.author}__}" class="media-heading">Book author</h5>
 						    <br/><p th:text="${book.description}">Book description</p>
-						    <br/><a th:href="@{/edit?id=__${book.id}__}" class="btn btn-warning" sec:authorize="hasRole('ROLE_ADMIN')">Edit</a>
-						    <a th:href="@{/delete?id=__${book.id}__}" class="btn btn-danger" sec:authorize="hasRole('ROLE_ADMIN')">Delete</a>
+						    <br/>
+						    <a th:href="@{/library/delete?id=__${book.id}__}" class="btn btn-danger">Delete</a>
 						  </div>
 				    	</div>
 				  </div>

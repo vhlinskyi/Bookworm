@@ -24,6 +24,10 @@ public class UserPrincipal extends User implements UserDetails {
 		super.setInfo(user.getInfo());
 		super.setBooks(user.getBooks());
 	}
+	
+	public UserPrincipal() {
+		
+	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

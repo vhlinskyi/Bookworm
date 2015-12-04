@@ -114,14 +114,17 @@
 						    <h5 th:text="@{Author: __${book.author}__}" class="media-heading">Book author</h5>
 						    <br/><p th:text="${book.description}">Book description</p>
 						    
-						    <br/><a th:unless="${#lists.contains(list, &quot;__${book.id}__&quot;)}" 
+						    <br/><a th:unless="${#lists.contains(usersBooks, &quot;__${book.id}__&quot;)}" 
 						    	th:href="@{/library/add?id=__${book.id}__}" 
 						    	class="btn btn-success" 
 						    	sec:authorize="isAuthenticated()">
 						    		Add to library		
 						    </a>
-						    <a th:if="${#lists.contains(list, &quot;__${book.id}__&quot;)}" sec:authorize="isAuthenticated()">
-						    		Book has already been added to library		
+						    <a th:if="${#lists.contains(usersBooks, &quot;__${book.id}__&quot;)}" 
+						    	th:href="@{/library/add?id=__${book.id}__}" 
+						    	class="btn btn-default disabled" 
+						    	sec:authorize="isAuthenticated()">
+						    		Added		
 						    </a>	    
 						    <a th:href="@{/edit?id=__${book.id}__}" class="btn btn-warning" sec:authorize="hasRole('ROLE_ADMIN')">Edit</a>
 						    <a th:href="@{/delete?id=__${book.id}__}" class="btn btn-danger" sec:authorize="hasRole('ROLE_ADMIN')">Delete</a>

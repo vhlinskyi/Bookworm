@@ -17,6 +17,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -73,7 +74,7 @@ public class ProfileController {
 			return "/signup";
 		}
 		
-		login(user);
+		authenticateUser(user);
 		userService.save(user);
 		
 		return "redirect:/profile";
@@ -88,7 +89,7 @@ public class ProfileController {
 	 @RequestMapping(value = "/profile/edit", method = RequestMethod.GET)
 	 public ModelAndView showEditUserProfileFrom() {
 		 
-		 return new ModelAndView("edit_profile", "user", authenticatedUser()); 
+		 return new ModelAndView("edit_profile", "user", getAuthenticatedUser()); 
 	 }
 	 
 	 @RequestMapping(value = "/profile/edit", method = RequestMethod.POST)
@@ -104,7 +105,7 @@ public class ProfileController {
 	    	
 		 setImage(user, file);
 		 userService.save(user);
-		 login(user);
+		 authenticateUser(user);
 		 	    	
 		 return new ModelAndView("redirect:/profile/");
 		 
@@ -114,8 +115,7 @@ public class ProfileController {
 	 public void getUploadedPicture(HttpServletResponse response) throws IOException {
 		 
 		 Resource pic;
-		 User user = authenticatedUser();
-		 String path = user.getPicture();
+		 String path = getAuthenticatedUser().getPicture();
 		 
 		 pic = (path != null) ? new FileSystemResource(path) : defaultUserPicture;
 		 
@@ -150,14 +150,18 @@ public class ProfileController {
 		 }
 	 }
 	 
-	 public static User authenticatedUser() {
+	 public static User getAuthenticatedUser() {
 		 
 		 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		 
+		 if(auth instanceof AnonymousAuthenticationToken)
+			 return null;
+		 
 		 User user = (User) auth.getPrincipal();
 		 return user;
 	 }
 	 
-	 private void login(User user) {
+	 public static void authenticateUser(User user) {
 		 
 		 UserPrincipal userPrincipal = new UserPrincipal(user);
 		 Authentication auth = new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
@@ -173,7 +177,7 @@ public class ProfileController {
 		 return name.substring(name.lastIndexOf("."));
 	 }
 
-	private boolean isImage(MultipartFile file) {
+	 private boolean isImage(MultipartFile file) {
 			
 		 return file.getContentType().startsWith("image");
 	 }
