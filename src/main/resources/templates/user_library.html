@@ -22,6 +22,11 @@
 </head>
 
 <body>
+    <!-- jQuery -->
+    <script th:src="@{/js/jquery.js}"></script>
+    
+    <!-- jQuery Raty (https://github.com/wbotelhos/raty)-->
+    <script th:src="@{/js/jquery.raty.js}"></script>
 
     <div id="wrapper">
 
@@ -103,12 +108,13 @@
 				    	<div class="media">
 				    		<div class="media-left">
 						    	<a th:href="@{/book?id=__${book.id}__}">
-				      				<img class="media-object" th:src="@{/uploadedPicture?id=__${book.id}__}"/>
+				      				<img class="media-object book-item-img" th:src="@{/uploadedPicture?id=__${book.id}__}"/>
 							    </a>
 							 </div>
 				      		<div class="media-body">
 						    <a th:href="@{/book?id=__${book.id}__}"><h4 th:text="${book.title}" class="media-heading">Book title</h4></a>
 						    <h5 th:text="@{Author: __${book.author}__}" class="media-heading">Book author</h5>
+						    <div class="ratyRating" th:attr="data-id=${book.id}"></div>
 						    <br/><p th:text="${book.description}">Book description</p>
 						    <br/>
 						    <a th:href="@{/library/delete?id=__${book.id}__}" class="btn btn-danger">Delete</a>
@@ -123,9 +129,28 @@
         </div>
         
     </div>
-
-    <!-- jQuery -->
-    <script th:src="@{/js/jquery.js}"></script>
+    
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    	var books = [[${books}]];	    
+    	$(document).ready(function() {
+    		
+    		for(var i = 0; i < books.length; i++) {
+    			ratyInit(books[i].id, books[i].rating);
+			}
+    	});
+		
+		function ratyInit(id, initScore) {
+			
+			$("div").find("[data-id='" + id + "']").raty({
+		    	 path: '/images/raty',
+		    	 readOnly: true,
+		    	 score: initScore,
+		    	 noRatedMsg: 'not rated yet'
+		    });
+		}
+	/*]]>*/
+    </script>
 
     <!-- Bootstrap Core JavaScript -->
     <script th:src="@{/js/bootstrap.min.js}"></script>

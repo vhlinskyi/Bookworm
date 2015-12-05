@@ -3,6 +3,7 @@ package com.maxclay.controller;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,7 +37,9 @@ public class HomeController {
 	@RequestMapping("/")
 	public String home(Model model) {
 		
-		model.addAttribute("books", bookService.getAll());
+		List<Book> books = bookService.getAll();
+		Collections.sort(books);
+		model.addAttribute("books", books);
 		model.addAttribute("usersBooks", getUsersBooks());
 		
 		return "index";
