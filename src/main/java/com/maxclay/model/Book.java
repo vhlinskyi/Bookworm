@@ -2,6 +2,7 @@ package com.maxclay.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -27,12 +28,13 @@ public class Book implements Serializable {
     private String path;
     
     private List<Comment> comments;
+    private HashMap<String, Integer> rates;
     
     public Book() {
     }
 
     public Book(String source, String title, String author, short year, short pages, 
-    			String language, String description, String path, List<Comment> comments) {
+    			String language, String description, String path, List<Comment> comments, HashMap<String, Integer> rates) {
         
     	this.source = source;
     	this.title = title;
@@ -43,6 +45,7 @@ public class Book implements Serializable {
         this.description = description;
         this.path = path;
         this.comments = comments;
+        this.rates = rates;
 
     }
 
@@ -133,6 +136,20 @@ public class Book implements Serializable {
     	
     	comments.add(0, comment);
     }
+    
+	 public void setRates(HashMap<String, Integer> rates) {
+		 this.rates = rates;
+	 }
+	 
+	 public HashMap<String, Integer> getRates() {
+		 return rates;
+	 }
+	 
+	 public void rate(String userId, int score) {
+		 if(rates == null)
+			 rates = new HashMap<String, Integer>();
+		 rates.put(userId, new Integer(score));
+	 }
 
     @Override
     public String toString() {

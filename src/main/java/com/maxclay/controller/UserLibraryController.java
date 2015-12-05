@@ -83,19 +83,16 @@ public class UserLibraryController {
 				
 		}
 		
-		if(usersBooks.size() != user.getBooks().size())
+
+		if(sizeBefore != usersBooks.size())
 			updateUsersBooks(books);
-		if(sizeBefore != usersBooks.size()) {
-			System.out.println("Second checking!");
-			updateUsersBooks(books);
-		}
+		
 		
 		return books;
 	}
 
 	private void updateUsersBooks(List<Book> books) {
 		
-		System.out.println("In method!");
 		List<String> changedList = new ArrayList<String>();
 		for(Book b : books)
 			changedList.add(b.getId());

@@ -47,11 +47,21 @@ public class HomeController {
         
 		Book book = bookService.get(id);
 		model.addAttribute("book", book);
+		model.addAttribute("initialRatingScore", getRatingScore(book));
 		
 		return "show_book";
 	}
 	
-	 @RequestMapping(value = "/view", method = RequestMethod.GET)
+	private int getRatingScore(Book book) {
+		
+		User user = ProfileController.getAuthenticatedUser();
+		if(user == null || book.getRates() == null || !book.getRates().containsKey(user.getId()))
+			return 0;
+		else
+			return book.getRates().get(user.getId());
+	}
+
+	@RequestMapping(value = "/view", method = RequestMethod.GET)
 	 public void readBook(@RequestParam(required = true) String source,
 			 HttpServletRequest request, HttpServletResponse response) throws IOException {
 		 
