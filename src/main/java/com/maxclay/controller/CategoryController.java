@@ -45,7 +45,6 @@ public class CategoryController {
 	@RequestMapping("/categories/add")
 	public String addCategory(@RequestParam(required = true) String name, RedirectAttributes redirectAttrs) {
 		
-		System.out.println("Add category: " + name);
 		if(categoryDao.getByName(name.trim()) != null)
 			redirectAttrs.addFlashAttribute("error", "Category alredy exists");
 		else

@@ -4,7 +4,11 @@
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extrasspringsecurity3">
 <head lang="en">
 	<meta charset="UTF-8"/>
-	<title>Category</title>
+	<title>Categories</title>
+	
+	<meta name="_csrf" th:content="${_csrf.token}"/>
+	<!-- default header name is X-CSRF-TOKEN -->
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
     <!-- Bootstrap Core CSS -->
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" media="screen" />
@@ -83,7 +87,7 @@
                         <a href="#" data-toggle="collapse" data-target="#management"><i class="fa fa-fw fa-wrench"></i> Management <i class="fa fa-fw fa-caret-down"></i></a>
                         <ul id="management" class="collapse">
                             <li>
-                                <a href="/add">Books</a>
+                                <a href="/management/books">Books</a>
                             </li>
                             <li>
                                 <a href="/management/category">Categories</a>
@@ -128,10 +132,12 @@
 						    <input class="form-control" type="text" placeholder="Enter category name" name="name"/>
 						</div>
 						<div class="submit">
-					    	<button class="btn btn-success" type="submit" name="save" >Submit</button>
-					    </div>
+						    	<button class="btn btn-success" type="submit" name="save" >Add</button>
+						    	<a class="btn btn-danger" onclick="deleteCategories();" type="delete">Delete</a>
+						</div>
 					</fieldset>
 				</form>
+						
 				</div>
 				
 				<div class="row col-lg-6">
@@ -146,8 +152,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr th:each="category : ${categories}">
-                                        <td><input type="checkbox" class="checkbox"/></td>
+                                    <tr th:each="category : ${categories}" class="categoryRow">
+                                        <td><input type="checkbox" class="checkbox" th:attr="data-id=${category.id}"/></td>
                                         <td th:text="${category.name}">name</td>
                                         <td th:if="${category.books}" th:text="${#lists.size(category.books)}">count</td>
                                         <td th:unless="${category.books}">0</td>
@@ -188,6 +194,37 @@
 				var url = "/categories/category?id=" + data[i].id;
 				$("#categories").append("<li><a href=" + url + ">" + data[i].name + "</a></li>")
 			}
+		}
+		
+		function deleteCategories() {
+			
+			var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+			var selected = [];
+			
+			$('.categoryRow input:checked').each(function() {
+				
+				selected.push($(this).attr('data-id'))
+			});
+			
+			$(document).ajaxSend(function(e, xhr, options) {
+     			xhr.setRequestHeader(header, token);
+     			
+     		});
+			
+			$.ajax({
+     			
+     			url: "/management/category/delete",
+				method: 'POST',
+				contentType: "application/json; charset=utf-8",
+				data : JSON.stringify(selected),
+				cache: false
+				
+     		}).always(function() {
+     			
+     			location.reload(true);
+     		});
+									
 		}
 	/*]]>*/
     </script>

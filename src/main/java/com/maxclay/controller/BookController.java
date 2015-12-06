@@ -109,7 +109,7 @@ public class BookController {
     	setImage(book, bookImageFile);
     	bookService.add(book);
     	
-        return "redirect:/";
+        return "redirect:/management/books";
     }
     
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
@@ -160,7 +160,7 @@ public class BookController {
     	
     	Book book = bookService.get(id);
   
-    	if(book.getPath() != null && !book.getPath().equals(""))
+    	if(book != null && book.getPath() != null && !book.getPath().equals(""))
     		deleteBookPicture(book);
 
     	bookSourceDao.delete(book);
