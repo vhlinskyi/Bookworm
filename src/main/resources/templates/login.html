@@ -23,6 +23,9 @@
 
 <body>
 
+	<!-- jQuery -->
+    <script th:src="@{/js/jquery.js}"></script>
+
     <div id="wrapper">
 
         <!-- Navigation -->
@@ -48,7 +51,10 @@
                         <a href="/"><i class="fa fa-fw fa-star"></i> Popular books</a>
                     </li>
                     <li>
-                        <a href="#"><i class="fa fa-fw fa-folder"></i> Categories</a>
+                        <a href="javascript:;" data-toggle="collapse" data-target="#categories"><i class="fa fa-fw fa-folder"></i> Categories <i class="fa fa-fw fa-caret-down"></i></a>
+                        <ul id="categories" class="collapse">
+                                                	
+                        </ul>
                     </li>
                     <li>
                         <a href="#"><i class="fa fa-fw fa-search"></i> Search</a>
@@ -106,9 +112,34 @@
         </div>
         
     </div>
-
-    <!-- jQuery -->
-    <script th:src="@{/js/jquery.js}"></script>
+    
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    	var books = [[${books}]];	    
+    	$(document).ready(function() {
+    		loadCategories();
+    	});
+		
+		function loadCategories() {
+			
+			$.ajax({
+				type: 'get',
+			    url: '/categories/all',
+				success: function(data) {
+					createElements(data);
+				}
+			});
+		}
+		
+		function createElements(data) {
+			
+			for(var i = 0; i < data.length; i++) {
+				var url = "/categories/category?id=" + data[i].id;
+				$("#categories").append("<li><a href=" + url + ">" + data[i].name + "</a></li>")
+			}
+		}
+	/*]]>*/
+    </script>
 
     <!-- Bootstrap Core JavaScript -->
     <script th:src="@{/js/bootstrap.min.js}"></script>

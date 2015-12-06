@@ -4,7 +4,7 @@
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extrasspringsecurity3">
 <head lang="en">
 	<meta charset="UTF-8"/>
-	<title>My library</title>
+	<title>Category</title>
 
     <!-- Bootstrap Core CSS -->
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" media="screen" />
@@ -22,11 +22,9 @@
 </head>
 
 <body>
-    <!-- jQuery -->
+
+	<!-- jQuery -->
     <script th:src="@{/js/jquery.js}"></script>
-    
-    <!-- jQuery Raty (https://github.com/wbotelhos/raty)-->
-    <script th:src="@{/js/jquery.raty.js}"></script>
 
     <div id="wrapper">
 
@@ -57,6 +55,8 @@
                         </li>
                     </ul>
                 </li>
+                <a th:href="@{/login}" class="navbar-brand" sec:authorize="hasRole('ROLE_ANONYMOUS')">Login</a>
+                <a th:href="@{/signup}" class="navbar-brand" sec:authorize="hasRole('ROLE_ANONYMOUS')">Sign up</a>
             </ul>
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
@@ -69,7 +69,7 @@
                                                 	
                         </ul>
                     </li>
-                    <li class="active">
+                    <li sec:authorize="isAuthenticated()">
                         <a href="/library"><i class="fa fa-fw fa-book"></i> My library</a>
                     </li>
                     <li>
@@ -79,7 +79,7 @@
                     <li sec:authorize="isAuthenticated()">
                         <a href="/profile"><i class="fa fa-fw fa-user"></i> Profile</a>
                     </li>
-                    <li sec:authorize="hasRole('ROLE_ADMIN')">
+                    <li sec:authorize="hasRole('ROLE_ADMIN')" class="active">
                         <a href="#" data-toggle="collapse" data-target="#management"><i class="fa fa-fw fa-wrench"></i> Management <i class="fa fa-fw fa-caret-down"></i></a>
                         <ul id="management" class="collapse">
                             <li>
@@ -111,32 +111,52 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h1 class="page-header">
-                            My library
+                            Categories
                         </h1>
-                        
+                        <div class="col-lg-12">
+	                        <h4 class="text-danger" th:text="${error}" th:if="${error}">
+	                        	Error during create
+	                        </h4>
+						</div>
                     </div>
                 </div>
-
-                <div class="media-list" >
-					<div class="book-item col-lg-12" th:each="book : ${books}">
-				    	<div class="media">
-				    		<div class="media-left">
-						    	<a th:href="@{/book?id=__${book.id}__}">
-				      				<img class="media-object book-item-img" th:src="@{/uploadedPicture?id=__${book.id}__}"/>
-							    </a>
-							 </div>
-				      		<div class="media-body">
-						    <a th:href="@{/book?id=__${book.id}__}"><h4 th:text="${book.title}" class="media-heading">Book title</h4></a>
-						    <h5 th:text="@{Author: __${book.author}__}" class="media-heading">Book author</h5>
-						    <div class="ratyRating" th:attr="data-id=${book.id}"></div>
-						    <br/><p th:text="${book.description}">Book description</p>
-						    <br/>
-						    <a th:href="@{/library/delete?id=__${book.id}__}" class="btn btn-danger">Delete</a>
-						  </div>
-				    	</div>
-				  </div>
-				
+                <div class="row">
+                <form th:action="@{/categories/add}" method="get">
+					<fieldset class="col-lg-5">
+						<div class="form-group">
+							<label for="title">Add new category: </label>
+						    <input class="form-control" type="text" placeholder="Enter category name" name="name"/>
+						</div>
+						<div class="submit">
+					    	<button class="btn btn-success" type="submit" name="save" >Submit</button>
+					    </div>
+					</fieldset>
+				</form>
 				</div>
+				
+				<div class="row col-lg-6">
+                        <h3>Existing categories</h3>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover table-striped">
+                                <thead>
+                                    <tr>
+                                    	<th class="col-lg-1"></th>
+                                        <th>Name</th>
+                                        <th>Books count</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="category : ${categories}">
+                                        <td><input type="checkbox" class="checkbox"/></td>
+                                        <td th:text="${category.name}">name</td>
+                                        <td th:if="${category.books}" th:text="${#lists.size(category.books)}">count</td>
+                                        <td th:unless="${category.books}">0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+               
 				
             </div>
 
@@ -148,23 +168,8 @@
     /*<![CDATA[*/
     	var books = [[${books}]];	    
     	$(document).ready(function() {
-    		
-    		for(var i = 0; i < books.length; i++) {
-    			ratyInit(books[i].id, books[i].rating);
-			}
-    		
     		loadCategories();
     	});
-		
-		function ratyInit(id, initScore) {
-			
-			$("div").find("[data-id='" + id + "']").raty({
-		    	 path: '/images/raty',
-		    	 readOnly: true,
-		    	 score: initScore,
-		    	 noRatedMsg: 'not rated yet'
-		    });
-		}
 		
 		function loadCategories() {
 			
@@ -186,14 +191,14 @@
 		}
 	/*]]>*/
     </script>
- 
+
     <!-- Bootstrap Core JavaScript -->
     <script th:src="@{/js/bootstrap.min.js}"></script>
 
     <!-- Morris Charts JavaScript -->
-    <script th:src="@{js/plugins/morris/raphael.min.js}"></script>
-    <script th:src="@{js/plugins/morris/morris.min.js}"></script>
-    <script th:src="@{js/plugins/morris/morris-data.js}"></script>
+    <script th:src="@{/js/plugins/morris/raphael.min.js}"></script>
+    <script th:src="@{/js/plugins/morris/morris.min.js}"></script>
+    <script th:src="@{/js/plugins/morris/morris-data.js}"></script>
 
 </body>
 

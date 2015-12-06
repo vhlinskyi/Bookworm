@@ -81,12 +81,10 @@ public class UserLibraryController {
 			else
 				bookIter.remove();
 				
-		}
-		
+		}	
 
 		if(sizeBefore != usersBooks.size())
 			updateUsersBooks(books);
-		
 		
 		return books;
 	}

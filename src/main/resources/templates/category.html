@@ -1,14 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extrasspringsecurity3">
 <head lang="en">
 	<meta charset="UTF-8"/>
-	<meta name="_csrf" th:content="${_csrf.token}"/>
-	<!-- default header name is X-CSRF-TOKEN -->
-	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-	
-	<title th:text="${book.title}">Bookworm</title>
+	<title>Category</title>
 
     <!-- Bootstrap Core CSS -->
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" media="screen" />
@@ -22,21 +18,19 @@
 
     <!-- Custom Fonts -->
     <link th:href="@{/font-awesome/css/font-awesome.min.css}" rel="stylesheet" type="text/css"/>
-    	
-    
 
 </head>
 
-<body onload="loadComments()">
+<body>
 
-    <!-- jQuery -->
+	<!-- jQuery -->
     <script th:src="@{/js/jquery.js}"></script>
     
     <!-- jQuery Raty (https://github.com/wbotelhos/raty)-->
     <script th:src="@{/js/jquery.raty.js}"></script>
-  
+
     <div id="wrapper">
-    
+
         <!-- Navigation -->
         <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <!-- Brand and toggle get grouped for better mobile display -->
@@ -52,8 +46,8 @@
             <!-- Top Menu Items -->
             <ul class="nav navbar-right top-nav">
                 <li class="dropdown" sec:authorize="isAuthenticated()">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" ><i class="fa fa-user"></i> 
-                    <b sec:authentication="principal.name"/><b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> 
+                    <b sec:authentication="principal.name"/> <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li>
                             <a href="/profile"><i class="fa fa-fw fa-user"></i> Profile</a>
@@ -64,8 +58,7 @@
                         </li>
                     </ul>
                 </li>
-                
-                <a th:href="@{/login}" class="navbar-brand" sec:authorize="hasRole('ROLE_ANONYMOUS')">Login</a> 
+                <a th:href="@{/login}" class="navbar-brand" sec:authorize="hasRole('ROLE_ANONYMOUS')">Login</a>
                 <a th:href="@{/signup}" class="navbar-brand" sec:authorize="hasRole('ROLE_ANONYMOUS')">Sign up</a>
             </ul>
             <div class="collapse navbar-collapse navbar-ex1-collapse">
@@ -118,154 +111,75 @@
             <div class="container-fluid">
 
                 <!-- Page Heading -->
-                <div class="row" th:attr="data-id=${book.id}" id="bookTitle">
-                    <div class="col-lg-12">
-                        <h2 th:text="${book.title}" class="page-header"></h2>
-                    </div>
-                </div>
-                
                 <div class="row">
                     <div class="col-lg-12">
-                    	<h4 th:text="@{Author: __${book.author}__}" >Author</h4>
-                    	<h4 th:text="@{Year: __${book.year}__}" >Year</h4>
-                    	<h4 th:text="@{Pages: __${book.pages}__}" >Pages</h4>
-                    	<h4 th:text="@{Language: __${book.language}__}" >Language</h4>
-                    	<h4>Description:</h4>
-                        <p th:text="${book.description}" ></p>
-                        <p class="page-header"></p>
+                        <h1 class="page-header">
+                            Category
+                        </h1>
+                        
                     </div>
-                    
                 </div>
-                
-				<div class="row">
-					<div class="col-lg-12">
-					<h4 th:text="@{You can read or download __${book.title}__ right now:}" ></h4>
-					</div>
-            		<object th:attr="data=@{view?source=__${book.source}__}" type="application/pdf"> </object>
-            	</div>
+                <div class="media-list" >
+					<div class="book-item col-lg-12" th:each="book : ${books}">
+				    	<div class="media">
+				    		<div class="media-left">
+						    	<a th:href="@{/book?id=__${book.id}__}">
+				      				<!--img class="media-object" th:src="${book.path}"/-->
+				      				<img class="media-object book-item-img" th:src="@{/uploadedPicture?id=__${book.id}__}"/>
+							    </a>							    
+							 </div>
+				      		<div class="media-body">
+						    <a th:href="@{/book?id=__${book.id}__}"><h4 th:text="${book.title}" class="media-heading">Book title</h4></a>
+						    <h5 th:text="@{Author: __${book.author}__}" class="media-heading">Book author</h5>
+						    <div class="ratyRating" th:attr="data-id=${book.id}"></div>
+						    <br/><p th:text="${book.description}">Book description</p>
+						    
+						    <br/><a th:unless="${#lists.contains(usersBooks, &quot;__${book.id}__&quot;)}" 
+						    	th:href="@{/library/add?id=__${book.id}__}" 
+						    	class="btn btn-success" 
+						    	sec:authorize="isAuthenticated()">
+						    		Add to library		
+						    </a>
+						    <a th:if="${#lists.contains(usersBooks, &quot;__${book.id}__&quot;)}" 
+						    	th:href="@{/library/add?id=__${book.id}__}" 
+						    	class="btn btn-default disabled" 
+						    	sec:authorize="isAuthenticated()">
+						    		Added		
+						    </a>	    
+						    <a th:href="@{/edit?id=__${book.id}__}" class="btn btn-warning" sec:authorize="hasRole('ROLE_ADMIN')">Edit</a>
+						    <a th:href="@{/delete?id=__${book.id}__}" class="btn btn-danger" sec:authorize="hasRole('ROLE_ADMIN')">Delete</a>
+						  </div>
+				    	</div>
+				  </div>		
+				</div>
 				
-				<div class="row">
-					<br/><div class="col-lg-12" sec:authorize="isAuthenticated()">
-						<div id="ratingLabel">Rate this book:</div>
-						<div id="ratyRating"></div>
-					</div><br/>
-					<h4 class="page-header">Comments:</h4>
-					<h5 sec:authorize="hasRole('ROLE_ANONYMOUS')">You must be registered and logged in to comment and rate.</h5>
-					<div class="col-lg-7">
-						<form  id="commentForm" sec:authorize="isAuthenticated()">
-							<div class="form-group">
-								<textarea class="form-control" rows="3" id='commentText'></textarea>
-							</div>
-							<div class="submit">
-				            	<input type="submit" class="btn btn-primary" value="Send" />
-				            </div><br/>
-				        </form>
-				        
-			        </div>
-				</div>
-				<div class="row">
-					<div class="col-lg-8">
-					<div id="commentsBlock"></div>
-					</div>
-				</div>
             </div>
-            <div id="ratingResult"></div>
 
         </div>
         
-    </div>		
-	
-	<script th:inline="javascript">
-	/*<![CDATA[*/
-		var initialRatingScore = [[${initialRatingScore}]];//retrieve initScore argument from controller
-		console.log(initialRatingScore);
-			
-		$(document).ready(function(){
-				ratyInit(initialRatingScore);
-				loadCategories();
-		});
-		
-		function ratyInit(initScore) {
-			
-			if(initialRatingScore > 0) {
-				$('#ratingLabel').text('Your rate:');
+    </div>
+    
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    	var books = [[${books}]];	    
+    	$(document).ready(function() {
+    		
+    		for(var i = 0; i < books.length; i++) {
+    			ratyInit(books[i].id, books[i].rating);
 			}
+    		loadCategories();
+    	});
+		
+		function ratyInit(id, initScore) {
 			
-		    $('#ratyRating').raty({
+			$("div").find("[data-id='" + id + "']").raty({
 		    	 path: '/images/raty',
-		    	 readOnly: Boolean(initScore > 0),
+		    	 readOnly: true,
 		    	 score: initScore,
-		    	 click: function (score, evt) {
-		    		 sendRate(score);
-		    		 $('#ratingLabel').text('Thanks!');
-		    		 ratyInit(score);
-		    	 }
+		    	 noRatedMsg: 'not rated yet'
 		    });
 		}
 		
-		function sendRate(score) {
-			
-			var bookId = $("#bookTitle").attr("data-id");
-			$.ajax({
-				type: 'get',
-			    url: '/book/rating',
-			    data: {'score': score,
-			      	   'bookId': bookId}
-			});
-		}
-        
-        function loadComments() {
-        	
-        	var url = '/book/comment?bookId=' + $("#bookTitle").attr("data-id");
-        	$("#commentsBlock").load(url);
-        	$("#commentText").val('');
-        }
-        
-        $("#commentForm").submit(function(event) {
-        	event.preventDefault();
-        	
-        	var $form = $(this),
-					text = $form.find('textarea[id="commentText"]').val();
-        	
-        	if(text.trim()) {
-        	
-	        	var token = $("meta[name='_csrf']").attr("content");
-	            var header = $("meta[name='_csrf_header']").attr("content");
-	            var bookId = $("#bookTitle").attr("data-id");
-		
-	            var comment = {}
-	                comment["text"] = text;
-	                comment["author"] = "";
-	                comment["date"] = "";
-	           
-	     		$(document).ajaxSend(function(e, xhr, options) {
-	     			xhr.setRequestHeader(header, token);
-	     			
-	     		});
-	     		
-	     		$.ajax({
-	     			
-	     			url: "/book/comment?bookId=" + bookId,
-					contentType : "application/json",
-					method: 'POST',
-					data : JSON.stringify(comment),
-					dataType : 'json',
-					cache: false, // Force requested pages not to be cached by the browser
-					processData: false, // Avoid making query string instead of JSON
-					success: function(data, textStatus, jqXHR) {
-						   
-						loadComments();
-					},
-					error:function(xhr, exception) {
-	
-					    loadComments();
-					}
-					
-	     		});
-        	}
-     		
-        });
-        
 		function loadCategories() {
 			
 			$.ajax({
@@ -285,15 +199,15 @@
 			}
 		}
 	/*]]>*/
-	</script>	
-           
+    </script>
+
     <!-- Bootstrap Core JavaScript -->
     <script th:src="@{/js/bootstrap.min.js}"></script>
 
     <!-- Morris Charts JavaScript -->
-    <script th:src="@{js/plugins/morris/raphael.min.js}"></script>
-    <script th:src="@{js/plugins/morris/morris.min.js}"></script>
-    <script th:src="@{js/plugins/morris/morris-data.js}"></script>
+    <script th:src="@{/js/plugins/morris/raphael.min.js}"></script>
+    <script th:src="@{/js/plugins/morris/morris.min.js}"></script>
+    <script th:src="@{/js/plugins/morris/morris-data.js}"></script>
 
 </body>
 

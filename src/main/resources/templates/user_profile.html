@@ -22,6 +22,9 @@
 </head>
 
 <body>
+	
+	<!-- jQuery -->
+    <script th:src="@{/js/jquery.js}"></script>
 
     <div id="wrapper">
 
@@ -59,7 +62,10 @@
                         <a href="/"><i class="fa fa-fw fa-star"></i> Popular books</a>
                     </li>
                     <li>
-                        <a href="#"><i class="fa fa-fw fa-folder"></i> Categories</a>
+                        <a href="javascript:;" data-toggle="collapse" data-target="#categories"><i class="fa fa-fw fa-folder"></i> Categories <i class="fa fa-fw fa-caret-down"></i></a>
+                        <ul id="categories" class="collapse">
+                                                	
+                        </ul>
                     </li>
                     <li sec:authorize="isAuthenticated()">
                         <a href="/library"><i class="fa fa-fw fa-book"></i> My library</a>
@@ -71,7 +77,18 @@
                         <a href="/profile"><i class="fa fa-fw fa-user"></i> Profile</a>
                     </li>
                     <li sec:authorize="hasRole('ROLE_ADMIN')">
-                        <a href="/add"><i class="fa fa-fw fa-wrench"></i> Management(Add Book)</a>
+                        <a href="#" data-toggle="collapse" data-target="#management"><i class="fa fa-fw fa-wrench"></i> Management <i class="fa fa-fw fa-caret-down"></i></a>
+                        <ul id="management" class="collapse">
+                            <li>
+                                <a href="/add">Books</a>
+                            </li>
+                            <li>
+                                <a href="/management/category">Categories</a>
+                            </li>
+                            <li>
+                                <a href="#">Users</a>
+                            </li>                       	
+                        </ul>
                     </li>
                     <li>
                         <a href="#"><i class="fa fa-fw fa-child"></i> Help</a>
@@ -125,9 +142,34 @@
         </div>
         
     </div>
-
-    <!-- jQuery -->
-    <script th:src="@{/js/jquery.js}"></script>
+    
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    	var books = [[${books}]];	    
+    	$(document).ready(function() {
+    		loadCategories();
+    	});
+		
+		function loadCategories() {
+			
+			$.ajax({
+				type: 'get',
+			    url: '/categories/all',
+				success: function(data) {
+					createElements(data);
+				}
+			});
+		}
+		
+		function createElements(data) {
+			
+			for(var i = 0; i < data.length; i++) {
+				var url = "/categories/category?id=" + data[i].id;
+				$("#categories").append("<li><a href=" + url + ">" + data[i].name + "</a></li>")
+			}
+		}
+	/*]]>*/
+    </script>
 
     <!-- Bootstrap Core JavaScript -->
     <script th:src="@{/js/bootstrap.min.js}"></script>
