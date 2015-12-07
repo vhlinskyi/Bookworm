@@ -146,11 +146,11 @@ public class BookController {
     		return modelAndView;
     	}
     	
-    	Book book = bookService.update(bookDto);
+    	Book book = bookService.save(bookDto);
     	setSource(book, bookSourceFile);
     	setImage(book, bookImageFile);
     	
-    	bookService.update(book);
+    	bookService.save(book);
     	
         return new ModelAndView("redirect:/");
     }

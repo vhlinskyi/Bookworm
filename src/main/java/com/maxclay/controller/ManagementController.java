@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.maxclay.model.Book;
-import com.maxclay.model.Category;
 import com.maxclay.service.BookService;
 import com.maxclay.service.CategoryService;
 

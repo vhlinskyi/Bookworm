@@ -19,6 +19,6 @@ public interface BookService {
 	public void delete(Book book);
 	public void delete(String id);
 	
-	public Book update(BookDto bookDto);
-	public Book update(Book book);
+	public Book save(BookDto bookDto);
+	public Book save(Book book);
 }

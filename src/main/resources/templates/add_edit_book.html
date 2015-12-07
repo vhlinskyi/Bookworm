@@ -120,7 +120,8 @@
 
 				<form th:action="@{/__${action}__}" method="post" th:object="${book}" enctype="multipart/form-data">
 					<fieldset class="col-lg-10">
-						<input type="hidden" th:field="*{id}" />		
+						<input type="hidden" th:field="*{id}" />
+						<input type="hidden" th:field="*{category}" id="categoryField"/>		
 						<div class="form-group">
 							<label for="title">Title: </label>
 						    <input class="form-control" type="text" th:field="*{title}" placeholder="Enter title" th:errorclass="invalid"/>
@@ -147,6 +148,12 @@
 							<textarea class="form-control" rows="3" th:field="*{description}" placeholder="Enter description" ></textarea>
 						</div>
 						<div class="form-group">
+							<label for="moveCategory">Category: </label>
+							<select class="form-control" id="moveToCategory" th:attr="data-id=${book.category}">
+	                      		<option data-id="default">Default</option>
+	                    	</select>
+						</div>
+						<div class="form-group">
 							<label for="file">Choose book source(PDF): </label>
 							<input type="file" id="source" name="file" />
 						</div>
@@ -155,7 +162,7 @@
 							<input type="file" id="image" name="image"/>
 						</div>
 						<div class="submit">
-					    	<button class="btn btn-success" type="submit" name="save" >Submit</button>
+					    	<button class="btn btn-success" type="submit" name="save">Submit</button>
 					    </div>
 					</fieldset>
 				</form>
@@ -171,6 +178,7 @@
     	var books = [[${books}]];	    
     	$(document).ready(function() {
     		loadCategories();
+    		loadBookCategory();
     	});
 		
 		function loadCategories() {
@@ -186,11 +194,28 @@
 		
 		function createElements(data) {
 			
+			var categoryId = $("#moveToCategory").attr("data-id");
+			var selected = '';
+			
 			for(var i = 0; i < data.length; i++) {
+				
+				selected = ''
 				var url = "/categories/category?id=" + data[i].id;
-				$("#categories").append("<li><a href=" + url + ">" + data[i].name + "</a></li>")
+				$("#categories").append("<li><a href=" + url + ">" + data[i].name + "</a></li>");
+				
+				if(categoryId === data[i].id)
+					selected = 'selected';
+				
+				$("#moveToCategory").append("<option class='moveOption'" + selected + " data-id=" + data[i].id + ">" + data[i].name + "</option>");
 			}
+			
 		}
+		
+		$('#moveToCategory').change(function() {
+			  
+			  var selectedCategoryId = $("#moveToCategory option:selected").attr("data-id");
+			  $("#categoryField").val(selectedCategoryId);
+		});
 	/*]]>*/
     </script>
 

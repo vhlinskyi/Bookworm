@@ -11,6 +11,7 @@ public class BookDto {
 	private short pages;
 	private String language;
 	private String description;
+	private String category;
 	
 	public BookDto() {
 		
@@ -25,6 +26,7 @@ public class BookDto {
 		setPages(book.getPages());
 		setLanguage(book.getLanguage());
 		setDescription(book.getDescription());
+		setCategory(book.getCategory());
 	}
 	
 	public String getId() {
@@ -83,12 +85,20 @@ public class BookDto {
         this.description = description;
     }
     
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+    
     @Override
     public String toString() {
         return String.format(
                 "Book DTO [\n id=%s,\n title='%s',\n author='%s',\n year='%d',"
-                + "\n pages='%d',\n language='%s,\n description='%s']",
-                id, title, author, year, pages, language, description);
+                + "\n pages='%d',\n language='%s,\n description='%s', category='%s']",
+                id, title, author, year, pages, language, description, category);
     }
 
 }

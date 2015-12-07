@@ -12,30 +12,35 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.maxclay.dao.CategoryDao;
 import com.maxclay.model.Book;
 import com.maxclay.model.Category;
 import com.maxclay.model.User;
 import com.maxclay.service.BookService;
+import com.maxclay.service.CategoryService;
 
 @Controller
 public class CategoryController {
 	
 	private final BookService bookService;
-	private final CategoryDao categoryDao;
+	private final CategoryService categoryService;
 		
 	@Autowired
-	public CategoryController(BookService bookService, CategoryDao categoryDao) {
+	public CategoryController(BookService bookService, CategoryService categoryService) {
 
 		this.bookService = bookService;
-		this.categoryDao = categoryDao;
+		this.categoryService = categoryService;
 	}
 	
 	@RequestMapping("/categories/category")
 	public String showCategory(Model model, @RequestParam(required = true) String id) {
 		
-		List<Book> books = bookService.getAll();
+		List<Book> books = new ArrayList<Book>();
+		Category category = categoryService.get(id);
+		for(String bookId : category.getBooks())
+			books.add(bookService.get(bookId));
+		
 		Collections.sort(books);
+		model.addAttribute("categoryName", category.getName());
 		model.addAttribute("books", books);
 		model.addAttribute("usersBooks", getUsersBooks());
 		
@@ -45,10 +50,10 @@ public class CategoryController {
 	@RequestMapping("/categories/add")
 	public String addCategory(@RequestParam(required = true) String name, RedirectAttributes redirectAttrs) {
 		
-		if(categoryDao.getByName(name.trim()) != null)
+		if(categoryService.getByName(name.trim()) != null)
 			redirectAttrs.addFlashAttribute("error", "Category alredy exists");
 		else
-			categoryDao.add(new Category(name.trim(), null));
+			categoryService.add(new Category(name.trim(), null));
 		
 		return "redirect:/management/category";
 	}
@@ -57,7 +62,7 @@ public class CategoryController {
 	@RequestMapping("/categories/all")
 	public List<Category> getAllCategories() {
 		
-		return categoryDao.getAll();
+		return categoryService.getAll();
 	}
 	
 	private List<String> getUsersBooks() {
