@@ -5,6 +5,10 @@
 <head lang="en">
 	<meta charset="UTF-8"/>
 	<title>Books</title>
+	
+	<meta name="_csrf" th:content="${_csrf.token}"/>
+	<!-- default header name is X-CSRF-TOKEN -->
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
     <!-- Bootstrap Core CSS -->
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" media="screen" />
@@ -115,16 +119,26 @@
                         </h1>
                     </div>
                 </div>
-                <div class="row">
-               		<div class="col-lg-10">
-						<a href="/add" class="btn btn-success" type="submit">Add new book</a>					    
-						<a class="btn btn-danger" onclick="deleteBooks();">Delete</a>
-					</div>
+                <div class="row form-group">
+                	<div class="col-lg-4">
+						<label>Move to category:</label>
+	                    <select class="form-control" id="moveToCategory" >
+	                      	<option data-id="default">Default</option>
+	                    </select>
+                    </div>
+                </div>
+                <div>
+                    <div class="form-group">
+                    <a href="/add" class="btn btn-success" type="submit">Add new book</a>
+                    <a class="btn btn-warning" onclick="moveToCategory();">Move to category</a>
+					<a class="btn btn-danger" onclick="deleteBooks();">Delete</a>	
+                    </div>
 				</div>
+				
 				
 				<div class="row">
 					<div class="col-lg-10">
-                        <h3>Existing categories</h3>
+                        <h3>Existing books</h3>
                         <div class="table-responsive">
                             <table class="table table-bordered table-hover table-striped">
                                 <thead>
@@ -132,6 +146,7 @@
                                     	<th class="col-lg-1"></th>
                                         <th>Name</th>
                                         <th>Rating</th>
+                                        <th>Category</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -139,6 +154,8 @@
                                         <td><input type="checkbox" class="checkbox" th:attr="data-id=${book.id}"/></td>
                                         <td th:text="${book.title}">title</td>
                                         <td th:text="${book.rating}">rating</td>
+                                        <td th:if="${book.category}" th:attr="data-id=${book.category}" class="bookCategory"></td>
+                                        <td th:unless="${book.category}">Default</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -167,8 +184,33 @@
 			    url: '/categories/all',
 				success: function(data) {
 					createElements(data);
+					setCategoriesNames(data);
 				}
 			});
+		}
+		
+		function setCategoriesNames(data) {
+			
+// 			var books = []
+			$('.bookCategory').each(function() {
+				
+				var categoryId = ($(this).attr('data-id'));
+				var flag = false;
+				for(var i = 0; i < data.length; i++) {
+					if(categoryId === data[i].id) {
+						($(this)).text(data[i].name);
+						flag = true;
+					}
+				}
+				
+				if(!flag) {
+					console.log("Category: " + categoryId + " has been deleted!");
+					($(this)).text("Deleted");
+					//TODO delete category from book?
+				}
+			});
+			
+			
 		}
 		
 		function createElements(data) {
@@ -176,21 +218,28 @@
 			for(var i = 0; i < data.length; i++) {
 				var url = "/categories/category?id=" + data[i].id;
 				$("#categories").append("<li><a href=" + url + ">" + data[i].name + "</a></li>")
+				$("#moveToCategory").append("<option data-id=" + data[i].id + ">" + data[i].name + "</option>");
+				
 			}
 		}
 		var activeAJAX = 0;
 		function deleteBooks() {
 			
-			var selected = []
-			$('.bookRow input:checked').each(function() {
-				
-				selected.push($(this).attr('data-id'))
-			});
+			var selected = getSelected();
 			
 			for(var i = 0; i < selected.length; i++) {
 				deleteBook(selected[i]);
 			}
 			
+		}
+		
+		function getSelected() {
+			var selected = []
+			$('.bookRow input:checked').each(function() {
+				
+				selected.push($(this).attr('data-id'))
+			});
+			return selected;
 		}
 		
 		function deleteBook(id) {
@@ -206,6 +255,34 @@
 		
 		function allDone() {
 			location.reload(true);
+		}
+		
+		function moveToCategory() {
+			
+			var selected = getSelected();
+			if(selected.length === 0)
+				return;
+			
+			var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+            var categoryID = $( "#moveToCategory option:selected").attr('data-id');
+             
+            $(document).ajaxSend(function(e, xhr, options) {
+     			xhr.setRequestHeader(header, token);
+     			
+     		});
+			
+			$.ajax({
+     			
+     			url: "/management/category/addBooks?categoryId=" + categoryID,
+				method: 'POST',
+				contentType: "application/json; charset=utf-8",
+				data : JSON.stringify(selected),
+				cache: false
+				
+     		}).always(function() {
+     			allDone();
+     		});
 		}
 	/*]]>*/
     </script>

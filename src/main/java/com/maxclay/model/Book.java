@@ -31,13 +31,14 @@ public class Book implements Serializable, Comparable<Book> {
     private List<Comment> comments;
     private HashMap<String, Integer> rates;
     private float rating;
+    private String category;
     
     public Book() {
     }
 
     public Book(String source, String title, String author, short year, short pages, 
     			String language, String description, String path, List<Comment> comments, 
-    			HashMap<String, Integer> rates, float rating) {
+    			HashMap<String, Integer> rates, float rating, String category) {
         
     	this.source = source;
     	this.title = title;
@@ -50,6 +51,7 @@ public class Book implements Serializable, Comparable<Book> {
         this.comments = comments;
         this.rates = rates;
         this.rating = rating;
+        this.category = category;
 
     }
 
@@ -173,6 +175,18 @@ public class Book implements Serializable, Comparable<Book> {
 			 sum += entry.getValue();
 		 
 		 rating = sum / (float)rates.size();
+	 }
+	 
+	 public void setCategory(String category) {
+		 this.category = category;
+	 }
+	 
+	 public String getCategory() {
+		 return category;
+	 }
+	 
+	 public void setCategory(Category category) {
+		 this.category = category.getId();
 	 }
 	 
 	 @Override

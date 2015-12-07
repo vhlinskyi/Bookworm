@@ -1,7 +1,7 @@
 package com.maxclay.model;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.HashSet;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -15,13 +15,13 @@ public class Category implements Serializable {
 	@Id
 	private String id;
 	private String name;
-	private List<String> books;
+	private HashSet<String> books;
 	
 	public Category() {
 		
 	}
 	
-	public Category(String name, List<String> books) {
+	public Category(String name, HashSet<String> books) {
 		
 		this.name = name;
 		this.books = books;
@@ -43,11 +43,11 @@ public class Category implements Serializable {
 		return name;
 	}
 	
-	public void setBooks(List<String> books) {
+	public void setBooks(HashSet<String> books) {
 		this.books = books;
 	}
 	
-	public List<String> getBooks() {
+	public HashSet<String> getBooks() {
 		return books;
 	}
 	

@@ -23,9 +23,7 @@ public class CategoryDaoImpl implements CategoryDao {
 
 	@Override
 	public void add(Category category) {
-		
-		if(getByName(category.getName()) == null)
-			mongoOperations.save(category);
+		mongoOperations.save(category);
 	}
 
 	@Override

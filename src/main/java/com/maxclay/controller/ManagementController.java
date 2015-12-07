@@ -8,29 +8,32 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.maxclay.dao.CategoryDao;
+import com.maxclay.model.Book;
+import com.maxclay.model.Category;
 import com.maxclay.service.BookService;
+import com.maxclay.service.CategoryService;
 
 
 @Controller
 public class ManagementController {
 	
-	private final CategoryDao categoryDao;
+	private final CategoryService categoryService;
 	private final BookService bookService;
 	
 	@Autowired
-	public ManagementController(CategoryDao categoryDao, BookService bookService) {
+	public ManagementController(CategoryService categoryService, BookService bookService) {
 		
-		this.categoryDao = categoryDao;
+		this.categoryService = categoryService;
 		this.bookService = bookService;
 	}
 	
 	@RequestMapping("/management/category")
 	public String managementCategory(Model model) {
 		
-		model.addAttribute("categories", categoryDao.getAll());
+		model.addAttribute("categories", categoryService.getAll());
 		return "management_category";
 	}
 	
@@ -46,8 +49,16 @@ public class ManagementController {
 	public String deleteCategory(@RequestBody final List<String> categories) {
 	     
 		for(String s : categories)
-			categoryDao.delete(s);
+			categoryService.delete(s);
 	    
+	    return null;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/management/category/addBooks", method = RequestMethod.POST)
+	public String addBooks(@RequestBody final List<String> books, @RequestParam(required = true) String categoryId) {
+	    
+		categoryService.move(books, categoryId);
 	    return null;
 	}
 
