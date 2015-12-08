@@ -114,6 +114,12 @@ public class BookServiceImpl implements BookService {
 		return get(book.getId());
 	}
 	
+	@Override
+	public List<Book> find(String... words) {
+
+		return bookDao.find(words);
+	}
+	
 	private void updateBookFields(Book book, BookDto bookDto) {
 		
 		book.setAuthor(bookDto.getAuthor());

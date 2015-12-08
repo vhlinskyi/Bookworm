@@ -18,6 +18,7 @@ public interface BookService {
 	
 	public void delete(Book book);
 	public void delete(String id);
+	public List<Book> find(String... words);
 	
 	public Book save(BookDto bookDto);
 	public Book save(Book book);

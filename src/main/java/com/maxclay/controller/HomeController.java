@@ -55,13 +55,13 @@ public class HomeController {
 		return "show_book";
 	}
 	
-	private int getRatingScore(Book book) {
+	@RequestMapping("/search")
+	public String addCategory(@RequestParam(required = true) String searchParam) {
 		
-		User user = ProfileController.getAuthenticatedUser();
-		if(user == null || book.getRates() == null || !book.getRates().containsKey(user.getId()))
-			return 0;
-		else
-			return book.getRates().get(user.getId());
+		//TODO
+		System.out.println("Search parameter: " + searchParam);
+		
+		return "search_results";
 	}
 
 	@RequestMapping(value = "/view", method = RequestMethod.GET)
@@ -86,6 +86,14 @@ public class HomeController {
 			 list = user.getBooks();
 		
 		 return list; 
+	 }
+	 
+	 private int getRatingScore(Book book) {
+		 User user = ProfileController.getAuthenticatedUser();
+		 if(user == null || book.getRates() == null || !book.getRates().containsKey(user.getId()))
+			 return 0;
+		 else
+			 return book.getRates().get(user.getId());
 	 }
 
 }

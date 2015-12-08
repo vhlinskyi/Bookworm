@@ -14,6 +14,7 @@ public interface BookDao {
 	public List<Book> getByAuthor(String author);
 	public List<Book> getByYear(short year);
 	
+	public List<Book> find(String... words);
 	public void delete(Book book);
 	public void delete(String id);
 	

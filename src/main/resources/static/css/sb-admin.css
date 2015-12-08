@@ -265,3 +265,23 @@ object {
 textarea {
     resize: none;
 }
+
+.searchButton button{
+
+	border-bottom-left-radius: 0;
+	border-top-left-radius: 0;
+	margin-right: 15px;
+
+}
+
+.searchInput input{
+	
+	border-bottom-right-radius: 0;
+	border-top-right-radius: 0;
+}
+
+.searchButton, .searchInput {
+	
+	float: left;
+	margin-top: 3%;
+}

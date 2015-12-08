@@ -71,4 +71,11 @@ public class BookDaoImpl implements BookDao {
 		mongoOperations.remove(Query.query(Criteria.where("id").is(id)), Book.class);
 	}
 
+	//TODO (TextCriteria Language)
+	@Override
+	public List<Book> find(String... words) {
+		
+		return null;
+	}
+
 }

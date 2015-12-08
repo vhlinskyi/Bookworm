@@ -41,7 +41,17 @@
                 <a class="navbar-brand" href="/">Bookworm</a>
             </div>
             <!-- Top Menu Items -->
-            <ul class="nav navbar-right top-nav">            
+            <ul class="nav navbar-right top-nav">  
+           		<li>
+	            	<form th:action="@{/search}" method="get">	
+		            	<div class="searchInput">
+		            		<input type="text" class="form-control" name="searchParam"/>
+		            	</div>
+		            	<div class="searchButton">
+		            		<button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>          
+		            	</div>
+	            	</form>
+            	</li>          
                 <a th:href="@{/login}" class="navbar-brand" sec:authorize="hasRole('ROLE_ANONYMOUS')">Login</a>
                 <a th:href="@{/signup}" class="navbar-brand" sec:authorize="hasRole('ROLE_ANONYMOUS')">Sign up</a>
             </ul>

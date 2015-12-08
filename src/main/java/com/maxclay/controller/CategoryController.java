@@ -36,8 +36,9 @@ public class CategoryController {
 		
 		List<Book> books = new ArrayList<Book>();
 		Category category = categoryService.get(id);
-		for(String bookId : category.getBooks())
-			books.add(bookService.get(bookId));
+		if(category.getBooks() != null)
+			for(String bookId : category.getBooks())
+				books.add(bookService.get(bookId));
 		
 		Collections.sort(books);
 		model.addAttribute("categoryName", category.getName());
