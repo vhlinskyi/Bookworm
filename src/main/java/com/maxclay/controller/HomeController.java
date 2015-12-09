@@ -56,11 +56,15 @@ public class HomeController {
 	}
 	
 	@RequestMapping("/search")
-	public String addCategory(@RequestParam(required = true) String searchParam) {
+	public String addCategory(@RequestParam(required = true) String searchParam, Model model) {
 		
-		//TODO
-		System.out.println("Search parameter: " + searchParam);
+		List<Book> books = null;
+		if(searchParam.length() > 0)		
+			books = bookService.find(searchParam.split(" "));
 		
+		model.addAttribute("searchParam", searchParam);
+		model.addAttribute("usersBooks", getUsersBooks());
+		model.addAttribute("books", books);
 		return "search_results";
 	}
 

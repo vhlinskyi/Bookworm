@@ -123,13 +123,46 @@
                 <!-- Page Heading -->
                 <div class="row">
                     <div class="col-lg-12">
-                        <h1 class="page-header">
-                            Search results for ...
+                        <h1 class="page-header" th:text="@{Search results for '__${searchParam}__'}">
+                            
                         </h1>
                         
                     </div>
                 </div>
-           
+           		
+           		<div class="media-list" th:if="${books}">
+					<div class="book-item col-lg-12" th:each="book : ${books}">
+				    	<div class="media">
+				    		<div class="media-left">
+						    	<a th:href="@{/book?id=__${book.id}__}">
+				      				<!--img class="media-object" th:src="${book.path}"/-->
+				      				<img class="media-object book-item-img" th:src="@{/uploadedPicture?id=__${book.id}__}"/>
+							    </a>							    
+							 </div>
+				      		<div class="media-body">
+						    <a th:href="@{/book?id=__${book.id}__}"><h4 th:text="${book.title}" class="media-heading">Book title</h4></a>
+						    <h5 th:text="@{Author: __${book.author}__}" class="media-heading">Book author</h5>
+						    <div class="ratyRating" th:attr="data-id=${book.id}"></div>
+						    <br/><p th:text="${book.description}">Book description</p>
+						    
+						    <br/><a th:unless="${#lists.contains(usersBooks, &quot;__${book.id}__&quot;)}" 
+						    	th:href="@{/library/add?id=__${book.id}__}" 
+						    	class="btn btn-success" 
+						    	sec:authorize="isAuthenticated()">
+						    		Add to library		
+						    </a>
+						    <a th:if="${#lists.contains(usersBooks, &quot;__${book.id}__&quot;)}" 
+						    	th:href="@{/library/add?id=__${book.id}__}" 
+						    	class="btn btn-default disabled" 
+						    	sec:authorize="isAuthenticated()">
+						    		Added		
+						    </a>	    
+						    <a th:href="@{/edit?id=__${book.id}__}" class="btn btn-warning" sec:authorize="hasRole('ROLE_ADMIN')">Edit</a>
+						    <a th:href="@{/delete?id=__${book.id}__}" class="btn btn-danger" sec:authorize="hasRole('ROLE_ADMIN')">Delete</a>
+						  </div>
+				    	</div>
+				  </div>		
+				</div>
            
             </div>
 

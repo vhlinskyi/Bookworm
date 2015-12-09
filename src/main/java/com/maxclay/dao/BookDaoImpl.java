@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.TextCriteria;
+import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.stereotype.Repository;
 
 import com.maxclay.model.Book;
@@ -71,11 +73,14 @@ public class BookDaoImpl implements BookDao {
 		mongoOperations.remove(Query.query(Criteria.where("id").is(id)), Book.class);
 	}
 
-	//TODO (TextCriteria Language)
 	@Override
 	public List<Book> find(String... words) {
 		
-		return null;
+		TextCriteria criteria = TextCriteria.forDefaultLanguage().matchingAny(words);
+		Query query = TextQuery.queryText(criteria).sortByScore();
+		List<Book> books = mongoOperations.find(query, Book.class);
+		
+		return books;
 	}
 
 }

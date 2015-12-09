@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @SuppressWarnings("serial")
@@ -19,11 +20,14 @@ public class Book implements Serializable, Comparable<Book> {
 	private String id;
 	private String source;
 
+	@TextIndexed
     private String title;
+	@TextIndexed
     private String author;
     private short year;
     private short pages;
     private String language;
+    @TextIndexed
     private String description;
     
     private String path;
