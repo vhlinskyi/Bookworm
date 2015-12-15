@@ -86,7 +86,7 @@
                         <a href="/library"><i class="fa fa-fw fa-book"></i> My library</a>
                     </li>
                     <li>
-                        <a href="#"><i class="fa fa-fw fa-search"></i> Search</a>
+                        <a href="/advanced_search"><i class="fa fa-fw fa-search"></i> Search</a>
                     </li>
                     
                     <li sec:authorize="isAuthenticated()">
@@ -123,10 +123,8 @@
                 <!-- Page Heading -->
                 <div class="row">
                     <div class="col-lg-12">
-                        <h1 class="page-header" th:text="@{Search results for '__${searchParam}__'}">
-                            
-                        </h1>
-                        
+                        <h1 class="page-header" th:if="${searchParam}" th:text="@{Search results for '__${searchParam}__'}"></h1>
+                        <h1 class="page-header" th:unless="${searchParam}">Search results</h1>
                     </div>
                 </div>
            		

@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extrasspringsecurity3">
 <head lang="en">
 	<meta charset="UTF-8"/>
-	<title>Bookworm</title>
+	<title>Advanced search</title>
 
     <!-- Bootstrap Core CSS -->
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" media="screen" />
@@ -23,6 +25,9 @@
 
 	<!-- jQuery -->
     <script th:src="@{/js/jquery.js}"></script>
+    
+    <!-- jQuery Raty (https://github.com/wbotelhos/raty)-->
+    <script th:src="@{/js/jquery.raty.js}"></script>
 
     <div id="wrapper">
 
@@ -64,6 +69,7 @@
                     </ul>
                 </li>
                 <a th:href="@{/login}" class="navbar-brand" sec:authorize="hasRole('ROLE_ANONYMOUS')">Login</a>
+                <a th:href="@{/signup}" class="navbar-brand" sec:authorize="hasRole('ROLE_ANONYMOUS')">Sign up</a>
             </ul>
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
@@ -76,14 +82,14 @@
                                                 	
                         </ul>
                     </li>
-                    <li>
+                    <li sec:authorize="isAuthenticated()">
                         <a href="/library"><i class="fa fa-fw fa-book"></i> My library</a>
                     </li>
                     <li>
                         <a href="/advanced_search"><i class="fa fa-fw fa-search"></i> Search</a>
                     </li>
                     
-                    <li class="active">
+                    <li sec:authorize="isAuthenticated()">
                         <a href="/profile"><i class="fa fa-fw fa-user"></i> Profile</a>
                     </li>
                     <li sec:authorize="hasRole('ROLE_ADMIN')">
@@ -117,56 +123,86 @@
                 <!-- Page Heading -->
                 <div class="row">
                     <div class="col-lg-12">
-                        <h1 class="page-header">
-                            Edit profile
+                        <h1 class="page-header" >
+                            Advanced search
                         </h1>
-                        <div class="col-lg-12">
-	                        <h4 class="text-danger" th:text="${error}" th:if="${error}">
-	                        	Error during upload
-	                        </h4>
-						</div>
+                        
                     </div>
                 </div>
-
-				<form th:action="@{/profile/edit}" method="post" th:object="${user}" enctype="multipart/form-data">
-					<fieldset class="col-lg-10">
-						<input type="hidden" th:field="*{id}" />
-						<input type="hidden" th:field="*{picture}" />
-						<input type="hidden" th:field="*{email}" />
-						<input type="hidden" th:field="*{registrationDate}" />
-						<input type="hidden" th:field="*{password}" />
-						<input type="hidden" th:field="*{enabled}" />
-						<input type="hidden" th:field="*{roles}" />
-						<div class="form-group">
-							<label for="title">Name: </label>
-						    <input class="form-control" type="text" th:field="*{name}" placeholder="Enter name" />
+           		<!-- TODO validation -->
+           		<form action="advanced_search" method="post">
+           			<fieldset class="col-lg-5">
+           				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+           				<div class="form-group">
+							<label for="title">Title: </label>
+						    <input class="form-control" type="text" id="title" placeholder="Enter title" name="title" />
 						</div>
 						<div class="form-group">
-							<label for="title">Information: </label>
-						    <textarea class="form-control" rows="3" th:field="*{info}" placeholder="Enter information about yourself"></textarea>
+							<label for="author">Author: </label>
+						    <input class="form-control" type="text" id="author" placeholder="Enter author" name="author" />
 						</div>
-						<div class="form-group">
-							<label for="file">Choose profile image: </label>
-							<input type="file" id="file" name="file"/>
-						</div>
-						<div class="submit">
-					    	<button class="btn btn-success" type="submit" name="save" >Submit</button>
-					    </div>
+	           			<div class="form-group">
+							<label for="categorySearchParam">Category: </label>
+							<select class="form-control" id="categorySearch" name="category">
+		                   		<option value="default">-</option>
+		                   	</select>
+						</div>	
 					</fieldset>
-				</form>
-								
+					<fieldset class="col-lg-4">
+						<div class="col-lg-8">
+							<div class="form-group">
+								<label for="year">Year: </label>
+							    <input class="form-control" type="number" id="year" name="year" />
+							</div>
+						</div>
+						<div class="col-lg-5">
+							<div class="form-group">
+								<label for="fromYear">From: </label>
+								<select class="form-control" id="fromYear" name="yearFrom">
+			                   		<option value="default">-</option>
+			                   	</select>
+							</div>
+							<div class="form-group">
+								<label for="toYear">To: </label>
+								<select class="form-control" id="toYear" name="yearTo">
+			                   		<option value="default">-</option>
+			                   	</select>
+							</div>
+							
+						</div>
+						
+					</fieldset>
+					<div class="col-lg-11">
+						<div class="submit">
+					    	<button class="btn btn-success" type="submit" name="search">Search</button>
+					    </div>
+					</div>
+           		</form>
+           
             </div>
 
         </div>
         
     </div>
     
-   	<script th:inline="javascript">
+    <script th:inline="javascript">
     /*<![CDATA[*/
-    	var books = [[${books}]];	    
     	$(document).ready(function() {
+    		
     		loadCategories();
+    		initYearSelect();
     	});
+    
+    	function initYearSelect() {
+    		
+    		var date = new Date();
+    		var year = date.getFullYear();
+    		
+    		for(var i = year; i > year - 150; i--) {
+    			$("#fromYear").append("<option>" + i + "</option>");
+    			$("#toYear").append("<option>" + i + "</option>");
+    		}
+    	}
 		
 		function loadCategories() {
 			
@@ -183,9 +219,28 @@
 			
 			for(var i = 0; i < data.length; i++) {
 				var url = "/categories/category?id=" + data[i].id;
-				$("#categories").append("<li><a href=" + url + ">" + data[i].name + "</a></li>")
+				$("#categories").append("<li><a href=" + url + ">" + data[i].name + "</a></li>");
+				$("#categorySearch").append("<option value='" + data[i].id + "'>" + data[i].name + "</option>");
 			}
 		}
+		
+		$('#fromYear').change(function() {
+			var selectedYearValue = $("#fromYear option:selected").val();
+			var selectedToYearValue = $("#toYear option:selected").val();
+			if(selectedYearValue !== "default")
+				$("#year").attr("disabled", "disabled");
+			else if(selectedToYearValue === "default")
+				$("#year").removeAttr("disabled");
+		});
+		
+		$('#toYear').change(function() {
+			var selectedYearValue = $("#toYear option:selected").val();
+			var selectedFromYearValue = $("#fromYear option:selected").val();
+			if(selectedYearValue !== "default")
+				$("#year").attr("disabled", "disabled");
+			else if(selectedFromYearValue === "default")
+				$("#year").removeAttr("disabled");
+		});
 	/*]]>*/
     </script>
 
@@ -193,9 +248,9 @@
     <script th:src="@{/js/bootstrap.min.js}"></script>
 
     <!-- Morris Charts JavaScript -->
-    <script th:src="@{js/plugins/morris/raphael.min.js}"></script>
-    <script th:src="@{js/plugins/morris/morris.min.js}"></script>
-    <script th:src="@{js/plugins/morris/morris-data.js}"></script>
+    <script th:src="@{/js/plugins/morris/raphael.min.js}"></script>
+    <script th:src="@{/js/plugins/morris/morris.min.js}"></script>
+    <script th:src="@{/js/plugins/morris/morris-data.js}"></script>
 
 </body>
 
