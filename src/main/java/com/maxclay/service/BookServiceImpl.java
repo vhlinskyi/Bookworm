@@ -124,7 +124,7 @@ public class BookServiceImpl implements BookService {
 		
 		book.setAuthor(bookDto.getAuthor());
     	book.setDescription(bookDto.getDescription());
-    	book.setLanguage(bookDto.getLanguage());
+    	book.setBookLanguage(bookDto.getLanguage());
     	book.setPages(bookDto.getPages());
     	book.setTitle(bookDto.getTitle());
     	book.setYear(bookDto.getYear());

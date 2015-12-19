@@ -4,7 +4,7 @@
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extrasspringsecurity3">
 <head lang="en">
 	<meta charset="UTF-8"/>
-	<title>Advanced search</title>
+	<title>Statistics</title>
 
     <!-- Bootstrap Core CSS -->
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" media="screen" />
@@ -26,8 +26,8 @@
 	<!-- jQuery -->
     <script th:src="@{/js/jquery.js}"></script>
     
-    <!-- jQuery Raty (https://github.com/wbotelhos/raty)-->
-    <script th:src="@{/js/jquery.raty.js}"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script th:src="@{/js/bootstrap.min.js}"></script>    
 
     <div id="wrapper">
 
@@ -92,7 +92,7 @@
                     <li sec:authorize="isAuthenticated()">
                         <a href="/profile"><i class="fa fa-fw fa-user"></i> Profile</a>
                     </li>
-                    <li sec:authorize="hasRole('ROLE_ADMIN')">
+                    <li sec:authorize="hasRole('ROLE_ADMIN')" class="active">
                         <a href="#" data-toggle="collapse" data-target="#management"><i class="fa fa-fw fa-wrench"></i> Management <i class="fa fa-fw fa-caret-down"></i></a>
                         <ul id="management" class="collapse">
                             <li>
@@ -126,62 +126,30 @@
                 <!-- Page Heading -->
                 <div class="row">
                     <div class="col-lg-12">
-                        <h1 class="page-header" >
-                            Advanced search
+                        <h1 class="page-header">
+                            Statistics
                         </h1>
-                        
                     </div>
                 </div>
-           		<!-- TODO validation -->
-           		<form action="advanced_search" method="post">
-           			<fieldset class="col-lg-5">
-           				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-           				<div class="form-group">
-							<label for="title">Title: </label>
-						    <input class="form-control" type="text" id="title" placeholder="Enter title" name="title" />
-						</div>
-						<div class="form-group">
-							<label for="author">Author: </label>
-						    <input class="form-control" type="text" id="author" placeholder="Enter author" name="author" />
-						</div>
-	           			<div class="form-group">
-							<label for="categorySearchParam">Category: </label>
-							<select class="form-control" id="categorySearch" name="category">
-		                   		<option value="default">-</option>
-		                   	</select>
-						</div>	
-					</fieldset>
-					<fieldset class="col-lg-4">
-						<div class="col-lg-8">
-							<div class="form-group">
-								<label for="year">Year: </label>
-							    <input class="form-control" type="number" id="year" name="year" />
-							</div>
-						</div>
-						<div class="col-lg-5">
-							<div class="form-group">
-								<label for="fromYear">From: </label>
-								<select class="form-control" id="fromYear" name="yearFrom">
-			                   		<option value="default">-</option>
-			                   	</select>
-							</div>
-							<div class="form-group">
-								<label for="toYear">To: </label>
-								<select class="form-control" id="toYear" name="yearTo">
-			                   		<option value="default">-</option>
-			                   	</select>
-							</div>
-							
-						</div>
-						
-					</fieldset>
-					<div class="col-lg-11">
-						<div class="submit">
-					    	<button class="btn btn-success" type="submit" name="search">Search</button>
-					    </div>
-					</div>
-           		</form>
-           
+                
+				<h3>Books rating:</h3>
+                <div class="row">
+                    <div class="col-lg-12">
+             			<div id="mostRatedBooksChart"></div> 
+                	</div>
+                </div>
+               	<h3>Most commented books:</h3>
+                <div class="row">
+                    <div class="col-lg-12">
+             			<div id="mostCommentedBooksChart"></div> 
+                	</div>
+                </div>	 
+				<h3>Favorites books:</h3>
+                <div class="row">
+                    <div class="col-lg-12">
+             			<div id="favoritesBooksChart"></div> 
+                	</div>
+                </div>
             </div>
 
         </div>
@@ -191,21 +159,9 @@
     <script th:inline="javascript">
     /*<![CDATA[*/
     	$(document).ready(function() {
-    		
     		loadCategories();
-    		initYearSelect();
+			
     	});
-    
-    	function initYearSelect() {
-    		
-    		var date = new Date();
-    		var year = date.getFullYear();
-    		
-    		for(var i = year; i > year - 150; i--) {
-    			$("#fromYear").append("<option>" + i + "</option>");
-    			$("#toYear").append("<option>" + i + "</option>");
-    		}
-    	}
 		
 		function loadCategories() {
 			
@@ -222,38 +178,121 @@
 			
 			for(var i = 0; i < data.length; i++) {
 				var url = "/categories/category?id=" + data[i].id;
-				$("#categories").append("<li><a href=" + url + ">" + data[i].name + "</a></li>");
-				$("#categorySearch").append("<option value='" + data[i].id + "'>" + data[i].name + "</option>");
+				$("#categories").append("<li><a href=" + url + ">" + data[i].name + "</a></li>")
 			}
 		}
 		
-		$('#fromYear').change(function() {
-			var selectedYearValue = $("#fromYear option:selected").val();
-			var selectedToYearValue = $("#toYear option:selected").val();
-			if(selectedYearValue !== "default")
-				$("#year").attr("disabled", "disabled");
-			else if(selectedToYearValue === "default")
-				$("#year").removeAttr("disabled");
-		});
-		
-		$('#toYear').change(function() {
-			var selectedYearValue = $("#toYear option:selected").val();
-			var selectedFromYearValue = $("#fromYear option:selected").val();
-			if(selectedYearValue !== "default")
-				$("#year").attr("disabled", "disabled");
-			else if(selectedFromYearValue === "default")
-				$("#year").removeAttr("disabled");
-		});
 	/*]]>*/
-    </script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script th:src="@{/js/bootstrap.min.js}"></script>
-
-    <!-- Morris Charts JavaScript -->
+	</script>
+	    
+	<!-- Morris Charts JavaScript -->
     <script th:src="@{/js/plugins/morris/raphael.min.js}"></script>
     <script th:src="@{/js/plugins/morris/morris.min.js}"></script>
     <script th:src="@{/js/plugins/morris/morris-data.js}"></script>
+
+	<script th:inline="javascript">
+    /*<![CDATA[*/	  
+               
+   	function getChartData() {
+   		var data = [];
+   		var ratedBooks = [[${ratedBooks}]];
+   		
+   		for(var i = 0; i < ratedBooks.length; i++) {
+   			var val = { title: ratedBooks[i].title, rating: ratedBooks[i].rating , bookId: ratedBooks[i].id};
+   			data.push(val);
+   		}
+   		return data;
+    }
+
+	Morris.Bar({
+		// ID of the element in which to draw the chart.
+		element: 'mostRatedBooksChart',
+		// Chart data records -- each entry in this array corresponds to a point on
+		// the chart.
+		data: [{title: "title", rating: 0}],
+		// The name of the data record attribute that contains x-values.
+		xkey: 'title',
+		// A list of names of data record attributes that contain y-values.
+		ykeys: ['rating'],
+		// Labels for the ykeys -- will be displayed when you hover over the
+		// chart.
+		labels: ['Rating'],
+		resize: true,
+		hideHover: 'auto',
+		xLabelMargin: 10,
+		hoverCallback: function (index, options, content, row) {
+			var data = options.data[index];
+			var url = '/book?id=';
+	        return '<a href="' + url + data.bookId + '">' + data.title + '</a><div>Rating:' + data.rating + '</div>';
+	      }
+		
+	}).setData(getChartData());
+	
+	function getCommentsChartData() {
+   		var data = [];
+   		var commentedBooks = [[${commentedBooks}]];
+   		for(var i = 0; i < commentedBooks.length; i++) {
+   			var val = { title: commentedBooks[i].title, comments: 0 , bookId: commentedBooks[i].id};
+   			if(commentedBooks[i].comments !== null && commentedBooks[i].comments.length !== 0)
+   				val.comments = commentedBooks[i].comments.length;
+   			data.push(val);
+   		}
+   		return data;
+    }
+	
+	Morris.Bar({
+		element: 'mostCommentedBooksChart',
+		data: [{title: "title", rating: 0}],
+		xkey: 'title',
+		ykeys: ['comments'],
+		labels: ['Comments'],
+		resize: true,
+		hideHover: 'auto',
+		barColors: ["#D9534F"],
+		xLabelMargin: 10,
+		hoverCallback: function (index, options, content, row) {
+			var data = options.data[index];
+			var url = '/book?id=';
+	        return '<a href="' + url + data.bookId + '">' + data.title + '</a><div>Comments:' + data.comments + '</div>';
+	      }
+		
+	}).setData(getCommentsChartData());
+	
+	function getFavoritesChartData() {
+		var data = [];
+   		var favoritesBooks = [[${favoritesBooks}]];
+   		
+   		for(var i = 0; i < favoritesBooks.length; i++) {
+   			var val = { title: favoritesBooks[i].book.title, users: favoritesBooks[i].count , bookId: favoritesBooks[i].book.id};
+   			
+   			data.push(val);
+   		}
+
+   		return data;
+	}
+	
+	Morris.Bar({
+		element: 'favoritesBooksChart',
+		data: [{title: "title", users: 0}],
+		xkey: 'title',
+		ykeys: ['users'],
+		labels: ['Users'],
+		resize: true,
+		hideHover: 'auto',
+		barColors: ["#5CB85C"],
+		xLabelMargin: 10,
+		hoverCallback: function (index, options, content, row) {
+			var data = options.data[index];
+			var url = '/book?id=';
+	        return '<a href="' + url + data.bookId + '">' + data.title + 
+	        		'</a><div>Quantity of users who</br> added this book to the library: ' +
+	        		data.users + '</div>';
+	      }
+		
+	}).setData(getFavoritesChartData());
+		
+	/*]]>*/
+    </script>
 
 </body>
 

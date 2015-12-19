@@ -24,7 +24,7 @@ public class BookDto {
 		setAuthor(book.getAuthor());
 		setYear(book.getYear());
 		setPages(book.getPages());
-		setLanguage(book.getLanguage());
+		setLanguage(book.getBookLanguage());
 		setDescription(book.getDescription());
 		setCategory(book.getCategory());
 	}

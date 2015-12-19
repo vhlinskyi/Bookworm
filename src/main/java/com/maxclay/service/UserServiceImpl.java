@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.maxclay.dao.UserDao;
 import com.maxclay.dto.UserDto;
+import com.maxclay.model.UsersBooksCount;
 import com.maxclay.model.User;
 
 @Service
@@ -91,6 +92,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<User> getAll() {
 		return userDao.getAll();
+	}
+
+	@Override
+	public List<UsersBooksCount> getFavoritesBooks() {
+		return userDao.getFavoritesBooks();
 	}
 
 }

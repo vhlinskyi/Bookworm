@@ -110,6 +110,9 @@
                             </li>
                             <li>
                                 <a href="/management/users">Users</a>
+                            </li>
+                            <li>
+                                <a href="/management/statistics">Statistics</a>
                             </li>                       	
                         </ul>
                     </li>
@@ -139,7 +142,7 @@
                     	<h4 th:text="@{Author: __${book.author}__}" >Author</h4>
                     	<h4 th:text="@{Year: __${book.year}__}" >Year</h4>
                     	<h4 th:text="@{Pages: __${book.pages}__}" >Pages</h4>
-                    	<h4 th:text="@{Language: __${book.language}__}" >Language</h4>
+                    	<h4 th:text="@{Language: __${book.bookLanguage}__}" >Language</h4>
                     	<h4>Description:</h4>
                         <p th:text="${book.description}" ></p>
                         <p class="page-header"></p>

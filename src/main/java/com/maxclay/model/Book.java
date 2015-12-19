@@ -26,7 +26,7 @@ public class Book implements Serializable, Comparable<Book> {
     private String author;
     private short year;
     private short pages;
-    private String language;
+    private String bookLanguage;
     @TextIndexed
     private String description;
     
@@ -41,7 +41,7 @@ public class Book implements Serializable, Comparable<Book> {
     }
 
     public Book(String source, String title, String author, short year, short pages, 
-    			String language, String description, String path, List<Comment> comments, 
+    			String bookLanguage, String description, String path, List<Comment> comments, 
     			HashMap<String, Integer> rates, float rating, String category) {
         
     	this.source = source;
@@ -49,7 +49,7 @@ public class Book implements Serializable, Comparable<Book> {
         this.author = author;
         this.year = year;
         this.pages = pages;
-        this.language = language;
+        this.bookLanguage = bookLanguage;
         this.description = description;
         this.path = path;
         this.comments = comments;
@@ -107,12 +107,12 @@ public class Book implements Serializable, Comparable<Book> {
         this.pages = pages;
     }
     
-    public String getLanguage() {
-        return language;
+    public String getBookLanguage() {
+        return bookLanguage;
     }
 
-    public void setLanguage(String language) {
-        this.language = language;
+    public void setBookLanguage(String bookLanguage) {
+        this.bookLanguage = bookLanguage;
     }
     
     public String getDescription() {
@@ -204,7 +204,7 @@ public class Book implements Serializable, Comparable<Book> {
 		 return String.format(
                 "Book [\n id=%s,\n source_id='%s',\n title='%s',\n author='%s',\n year='%d',"
                 + "\n pages='%d',\n language='%s,\n description='%s',\n image_path='%s', rating='%f']",
-                id, source, title, author, year, pages, language, description, path, rating);
+                id, source, title, author, year, pages, bookLanguage, description, path, rating);
     }
 
 }

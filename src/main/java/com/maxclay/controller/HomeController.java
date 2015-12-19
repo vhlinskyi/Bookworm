@@ -80,16 +80,16 @@ public class HomeController {
 	public String advancedSearchResult(Model model, @RequestParam(required = true) String title, @RequestParam(required = true) String author,
 										@RequestParam(required = true) String category, @RequestParam(required = false) String year,
 										@RequestParam(required = true) String yearFrom, @RequestParam(required = true) String yearTo) {
-		
+
 		List<Book> books = bookService.getAll()
-									.stream()
-									.filter(book ->title.equals("") || book.getTitle().toLowerCase().contains(title.toLowerCase()))
-									.filter(book ->author.equals("") || book.getAuthor().toLowerCase().contains(author.toLowerCase()))
-									.filter(book ->category.equals("default") || book.getCategory().equals(category))
-									.filter(book ->year == null || year.equals("") || Short.valueOf(year).equals(book.getYear()))
-									.filter(book ->yearFrom.equals("default") || book.getYear() >= Short.valueOf(yearFrom))
-									.filter(book ->yearTo.equals("default") || book.getYear() <= Short.valueOf(yearTo))
-									.collect(Collectors.toList());
+												.stream()
+												.filter(book ->title.equals("") || book.getTitle().toLowerCase().contains(title.toLowerCase()))
+												.filter(book ->author.equals("") || book.getAuthor().toLowerCase().contains(author.toLowerCase()))
+												.filter(book ->category.equals("default") || (book.getCategory() != null && book.getCategory().equals(category)))
+												.filter(book ->year == null || year.equals("") || Short.valueOf(year).equals(book.getYear()))
+												.filter(book ->yearFrom.equals("default") || book.getYear() >= Short.valueOf(yearFrom))
+												.filter(book ->yearTo.equals("default") || book.getYear() <= Short.valueOf(yearTo))
+												.collect(Collectors.toList());
 		
 		model.addAttribute("usersBooks", getUsersBooks());
 		model.addAttribute("books", books);

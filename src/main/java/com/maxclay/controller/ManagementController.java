@@ -1,5 +1,6 @@
 package com.maxclay.controller;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.maxclay.model.Book;
 import com.maxclay.model.User;
+import com.maxclay.model.UsersBooksCount;
 import com.maxclay.service.BookService;
 import com.maxclay.service.CategoryService;
 import com.maxclay.service.UserService;
@@ -38,6 +41,15 @@ public class ManagementController {
 		
 		model.addAttribute("categories", categoryService.getAll());
 		return "management_category";
+	}
+	
+	@RequestMapping("/management/statistics")
+	public String managementStatistics(Model model) {
+		
+		model.addAttribute("ratedBooks", getRatedBooks());		
+		model.addAttribute("commentedBooks", getCommentedBooks());	
+		model.addAttribute("favoritesBooks", getFavoritesBooks());		
+		return "management_statistics";
 	}
 	
 	@RequestMapping("/management/books")
@@ -121,6 +133,52 @@ public class ManagementController {
 				index = i;
 	
 		Collections.swap(users, 0, index);
+	}
+	
+	private List<Book> getRatedBooks() {
+		
+		List<Book> books = bookService.getAll();
+		if(books == null)
+			return null;
+		
+		Collections.sort(books);
+		if(books.size() > 10)
+			books = books.subList(0, 10);
+		
+		return books;
+	}
+	
+	private List<Book> getCommentedBooks() {
+		
+		if(bookService.getAll() == null)
+			return null;
+		
+		List<Book> commentedBooks = new ArrayList<Book>(bookService.getAll());
+		commentedBooks.sort(
+				(b1, b2) -> 
+				{
+					int c1 = b1.getComments() == null ? 0 : b1.getComments().size(); 
+					int c2 = b2.getComments() == null ? 0 : b2.getComments().size();
+					
+					return c2 - c1;
+				});
+		
+		if(commentedBooks.size() > 10)
+			commentedBooks = commentedBooks.subList(0, 10);
+		
+		return commentedBooks;
+	}
+	
+	private List<UsersBooksCount> getFavoritesBooks() {
+		
+		List<UsersBooksCount> favoritesBooks = userService.getFavoritesBooks();
+		if(userService.getFavoritesBooks() != null && userService.getFavoritesBooks().size() > 10)
+			favoritesBooks = favoritesBooks.subList(0, 10);
+		
+		for(UsersBooksCount ucb : favoritesBooks)
+			ucb.setBook(bookService.get(ucb.getBookId()));
+		
+		return favoritesBooks;
 	}
 
 }

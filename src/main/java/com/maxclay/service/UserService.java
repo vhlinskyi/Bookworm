@@ -3,6 +3,7 @@ package com.maxclay.service;
 import java.util.List;
 
 import com.maxclay.dto.UserDto;
+import com.maxclay.model.UsersBooksCount;
 import com.maxclay.model.User;
 
 public interface UserService {
@@ -14,5 +15,6 @@ public interface UserService {
 	public List<User> getAll();
 	public void delete(User user);
 	public void delete(String id);
+	public List<UsersBooksCount> getFavoritesBooks();
 	
 }
