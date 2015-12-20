@@ -263,9 +263,10 @@
    		var favoritesBooks = [[${favoritesBooks}]];
    		
    		for(var i = 0; i < favoritesBooks.length; i++) {
-   			var val = { title: favoritesBooks[i].book.title, users: favoritesBooks[i].count , bookId: favoritesBooks[i].book.id};
-   			
-   			data.push(val);
+   			if(favoritesBooks[i].book !== null) {
+   				var val = { title: favoritesBooks[i].book.title, users: favoritesBooks[i].count , bookId: favoritesBooks[i].book.id};   			
+   				data.push(val);
+   			}
    		}
 
    		return data;

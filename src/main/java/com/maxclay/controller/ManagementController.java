@@ -1,5 +1,9 @@
 package com.maxclay.controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -91,10 +95,13 @@ public class ManagementController {
 	
 	@ResponseBody
 	@RequestMapping(value = "/management/users/delete", method = RequestMethod.POST)
-	public String deleteUsers(@RequestBody final List<String> users) {
-	     
-		for(String userId : users)
+	public String deleteUsers(@RequestBody final List<String> users) throws IOException {
+	    
+		for(String userId : users) {
+			
+			deleteUserPicture(userService.get(userId));
 			userService.delete(userId);
+		}
 			
 	    return null;
 	}
@@ -114,6 +121,14 @@ public class ManagementController {
 		setUsersEnabled(users, true);
 	    return null;
 	}
+
+	private void deleteUserPicture(User user) throws IOException {
+		if(user.getPicture() == null || user.getPicture().equals(""))
+			return;
+		
+		Path path = Paths.get(user.getPicture());
+		Files.delete(path);
+	 }
 	
 	private void setUsersEnabled(List<String> users, boolean enabled) {
 		

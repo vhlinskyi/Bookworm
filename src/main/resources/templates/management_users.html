@@ -17,11 +17,11 @@
     <!-- Custom CSS -->    
     <link th:href="@{/css/sb-admin.css}" rel="stylesheet" type="text/css"/>
 
-    <!-- Morris Charts CSS -->
-    <link th:href="@{/css/plugins/morris.css}" rel="stylesheet" type="text/css"/>
-
     <!-- Custom Fonts -->
     <link th:href="@{/font-awesome/css/font-awesome.min.css}" rel="stylesheet" type="text/css"/>
+    
+    <!-- DataTables CSS -->
+    <link th:href="@{/css/dataTables.bootstrap.css}" rel="stylesheet" type="text/css"/>
 
 </head>
 
@@ -133,20 +133,22 @@
                     </div>
                 </div>
                 
-                <div>
-                    <div class="form-group">
-                    <a class="btn btn-success" onclick="unbanUsers();">Unban</a>
-                    <a class="btn btn-warning" onclick="banUsers();">Ban</a>
-					<a class="btn btn-danger" onclick="deleteUsers();">Delete</a>	
-                    </div>
-				</div>
-				
-				
+                <div class="form-group"> 
+       				<a class="btn btn-success" onclick="unbanUsers();">Unban</a>
+       				<a class="btn btn-warning" onclick="banUsers();">Ban</a>
+       				<a class="btn btn-danger" onclick="deleteUsers();">Delete</a>
+       			</div>
+
 				<div class="row">
-					<div class="col-lg-10">
-                        <h3>Existing users</h3>
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-hover table-striped">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>Existing users</h4>
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="dataTable_wrapper">
+                            <table class="table table-striped table-bordered table-hover" id="dataTables">
                                 <thead>
                                     <tr>
                                     	<th class="col-lg-1"></th>
@@ -162,8 +164,8 @@
                                         <td><input type="checkbox" class="checkbox" th:attr="data-id=${user.id}" /></td>
                                         <td th:text="${user.name}">name</td>
                                         <td th:text="${user.email}">email</td>
-                                        <td th:if="${user.enabled}">enabled</td>
-                                        <td th:unless="${user.enabled}">banned</td>
+                                        <td th:if="${user.enabled}" data-name="status">enabled</td>
+                                        <td th:unless="${user.enabled}" data-name="status">banned</td>
                                         <td>
                                         	<div th:each="role : ${user.roles}">
                                         		<div th:text="${role}">role</div>
@@ -173,9 +175,12 @@
                                     </tr>
                                 </tbody>
                             </table>
+                            </div>
+                            
                         </div>
                     </div>
                 </div>
+            </div>
                
 				
             </div>
@@ -186,6 +191,30 @@
     
     <script th:inline="javascript">
     /*<![CDATA[*/
+        $(document).ready(function() {
+        	$('#dataTables').DataTable({
+           		responsive: true,
+            	"dom":	"<'row toolbar'<'col-sm-6'l><'col-sm-6'f>>" +
+            			"<'row'<'col-sm-12'tr>>" +
+            	  		"<'row'<'col-sm-5'i><'col-sm-7'p>>"
+            	  
+       		 });
+       		 
+        	//Custom toolbar
+//        		var ht = $("div.toolbar").append('<div class="row col-sm-6">' + 
+//        											'<div class="col-sm-6">' + 
+//        												'<a class="btn btn-success" onclick="unbanUsers();">Unban</a>' + 
+//        												'<a class="btn btn-warning" onclick="banUsers();">Ban</a>' +
+//        												'<a class="btn btn-danger" onclick="deleteUsers();">Delete</a>'+
+//        											'</div>' + 
+//        										'</div>');
+
+        });
+    
+       
+    
+        
+        var action = '';
     	var books = [[${books}]];	    
     	$(document).ready(function() {
     		loadCategories();
@@ -236,20 +265,26 @@
 		
 		function deleteUsers() {
 			var selected = getSelected();
-			if(selected.length !== 0)
+			if(selected.length !== 0) {
 				sendRequest("/management/users/delete", selected);
+				action = 'delete';
+			}
 		}
 		
 		function banUsers() {
 			var selected = getSelected();
-			if(selected.length !== 0)
+			if(selected.length !== 0) {
 				sendRequest("/management/users/ban", selected);
+				action = 'ban';
+			}
 		}
 		
 		function unbanUsers() {
 			var selected = getSelected();
-			if(selected.length !== 0)
+			if(selected.length !== 0) {
 				sendRequest("/management/users/unban", selected);
+				action = 'unban';
+			}
 		}
 		
 		function sendRequest(url, selected) {
@@ -272,22 +307,53 @@
 				cache: false
 				
      		}).always(function() {
-     			
-     			location.reload(true);
+     			update()
      		});
 		}
 		
+		function update() {
+			
+			var table = $("#dataTables").dataTable();
+			var selected = getSelected();
+			var toDelete = [];
+			for(var i = 0; i < selected.length; i++) {
+
+				$(".userRow input[data-id=" + selected[i] + "]").prop("checked", false);
+				
+				var row = $(".userRow input[data-id=" + selected[i] + "]").parent().parent();
+				
+				if(action === 'ban')
+					row.find("[data-name='status']").html('banned');
+				else if(action === 'unban')
+					row.find("[data-name='status']").html('enabled');
+				else if(action === 'delete')
+					toDelete.push(row);				
+				
+			}
+			
+			action = '';
+
+			if(toDelete.length > 0)
+				deleteRecordsFromTable(table, toDelete);
+			
+		}
+		
+		function deleteRecordsFromTable(table, toDelete) {
+			for(var i = 0; i < toDelete.length; i++)
+				table.fnDeleteRow(toDelete[i]);
+		}	
 		
 	/*]]>*/
     </script>
 
     <!-- Bootstrap Core JavaScript -->
     <script th:src="@{/js/bootstrap.min.js}"></script>
-
-    <!-- Morris Charts JavaScript -->
-    <script th:src="@{/js/plugins/morris/raphael.min.js}"></script>
-    <script th:src="@{/js/plugins/morris/morris.min.js}"></script>
-    <script th:src="@{/js/plugins/morris/morris-data.js}"></script>
+    
+    <!-- DataTables JavaScript -->
+    <script th:src="@{/js/jquery.dataTables.min.js}"></script>
+    <script th:src="@{/js/dataTables.bootstrap.min.js}"></script>
+    <script th:src="@{/js/dataTables.responsive.min.js}"></script>
+    <script th:src="@{/js/responsive.bootstrap.min.js}"></script>
 
 </body>
 

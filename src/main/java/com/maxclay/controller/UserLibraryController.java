@@ -88,7 +88,8 @@ public class UserLibraryController {
 		
 		return books;
 	}
-
+	
+	//lazy removing
 	private void updateUsersBooks(List<Book> books) {
 		
 		List<String> changedList = new ArrayList<String>();
