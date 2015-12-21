@@ -5,6 +5,10 @@
 <head lang="en">
 	<meta charset="UTF-8"/>
 	<title>Bookworm</title>
+	
+	<meta name="_csrf" th:content="${_csrf.token}"/>
+	<!-- default header name is X-CSRF-TOKEN -->
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
     <!-- Bootstrap Core CSS -->
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" media="screen" />
@@ -12,9 +16,6 @@
 
     <!-- Custom CSS -->    
     <link th:href="@{/css/sb-admin.css}" rel="stylesheet" type="text/css"/>
-
-    <!-- Morris Charts CSS -->
-    <link th:href="@{/css/plugins/morris.css}" rel="stylesheet" type="text/css"/>
 
     <!-- Custom Fonts -->
     <link th:href="@{/font-awesome/css/font-awesome.min.css}" rel="stylesheet" type="text/css"/>
@@ -28,6 +29,14 @@
     
     <!-- jQuery Raty (https://github.com/wbotelhos/raty)-->
     <script th:src="@{/js/jquery.raty.js}"></script>
+    
+    
+    <!-- Bootstrap Core JavaScript -->
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    
+        
+    <!-- JQuery Pagination Plugin -->
+    <script th:src="@{/js/jquery.twbsPagination.min.js}"></script>
 
     <div id="wrapper">
 
@@ -73,8 +82,11 @@
             </ul>
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
-                    <li class="active">
-                        <a href="/"><i class="fa fa-fw fa-star"></i> Popular books</a>
+                    <li class="active" th:if="${pages_num} gt 0">
+                        <a href="/books"><i class="fa fa-fw fa-star"></i> All books</a>
+                    </li>
+                    <li th:unless="${pages_num} gt 0">
+                        <a href="/books"><i class="fa fa-fw fa-star"></i> All books</a>
                     </li>
                     <li>
                         <a href="javascript:;" data-toggle="collapse" data-target="#categories"><i class="fa fa-fw fa-folder"></i> Categories <i class="fa fa-fw fa-caret-down"></i></a>
@@ -126,10 +138,19 @@
                 <!-- Page Heading -->
                 <div class="row">
                     <div class="col-lg-12">
-                        <h1 class="page-header">
-                            Popular  <small>The most rated books</small>
+                        <h1 class="page-header" th:if="${pages_num} gt 0">
+                            All books
                         </h1>
-                        
+                        <div th:unless="${pages_num} gt 0">
+                        <h1 class="page-header" >
+                            Bookworm <small sec:authorize="isAuthenticated()">Take a look at these books, you may find them interesting :)</small>
+                        </h1>
+                        <h1 class="page-header" sec:authorize="!isAuthenticated()">
+                            Welcome <br/><small>Bookworm it's online library. <br/>
+                            					You can find and read books just now or sign in and enjoy full functionality!<br/>
+                            					Take a look at these books, you may find them interesting :)</small>
+                        </h1>
+                        </div>
                     </div>
                 </div>
                 <div class="media-list" >
@@ -165,15 +186,31 @@
 				    	</div>
 				  </div>		
 				</div>
-				
+				<ul id="pagination" style="float: right;"></ul>
             </div>
+            
+            
 
         </div>
         
     </div>
+
     
     <script th:inline="javascript">
     /*<![CDATA[*/
+               
+       	var pages_num = [[${pages_num}]];
+    	if(pages_num > 0) {
+	        $('#pagination').twbsPagination({
+	        	
+			  	totalPages: pages_num,
+			 	visiblePages: 5,
+			  	href: '?page={{number}}'
+			 
+			});
+    	}
+    	
+               
     	var books = [[${books}]];	    
     	$(document).ready(function() {
     		
@@ -217,13 +254,6 @@
 	/*]]>*/
     </script>
 
-    <!-- Bootstrap Core JavaScript -->
-    <script th:src="@{/js/bootstrap.min.js}"></script>
-
-    <!-- Morris Charts JavaScript -->
-    <script th:src="@{js/plugins/morris/raphael.min.js}"></script>
-    <script th:src="@{js/plugins/morris/morris.min.js}"></script>
-    <script th:src="@{js/plugins/morris/morris-data.js}"></script>
 
 </body>
 

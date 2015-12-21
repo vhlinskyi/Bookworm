@@ -3,7 +3,6 @@ package com.maxclay.controller;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +24,8 @@ import com.maxclay.service.BookService;
 @Controller
 public class HomeController {
 	
+	public static final short BOOKS_ON_PAGE = 5;
+	
 	private final BookSourceDao bookSourceDao;
 	private final BookService bookService;
 		
@@ -38,9 +39,23 @@ public class HomeController {
 	@RequestMapping("/")
 	public String home(Model model) {
 		
-		List<Book> books = bookService.getAll();
-		Collections.sort(books);
+		model.addAttribute("books", bookService.getPopular(BOOKS_ON_PAGE));	
+		model.addAttribute("pages_num", 0);
+		model.addAttribute("usersBooks", getUsersBooks());
+		
+		return "index";
+	}
+	
+	@RequestMapping(value = "/books", method = RequestMethod.GET)
+	public String allBooks(Model model, @RequestParam(required = false, defaultValue = "1") Integer page) {
+		
+		long booksNum = bookService.count();
+		long pagesNum = (booksNum % BOOKS_ON_PAGE != 0) ? booksNum / BOOKS_ON_PAGE + 1 : booksNum / BOOKS_ON_PAGE;
+				
+		List<Book> books = bookService.get((page - 1) * BOOKS_ON_PAGE, page * BOOKS_ON_PAGE);
+						
 		model.addAttribute("books", books);
+		model.addAttribute("pages_num", pagesNum);
 		model.addAttribute("usersBooks", getUsersBooks());
 		
 		return "index";
@@ -82,14 +97,14 @@ public class HomeController {
 										@RequestParam(required = true) String yearFrom, @RequestParam(required = true) String yearTo) {
 
 		List<Book> books = bookService.getAll()
-												.stream()
-												.filter(book ->title.equals("") || book.getTitle().toLowerCase().contains(title.toLowerCase()))
-												.filter(book ->author.equals("") || book.getAuthor().toLowerCase().contains(author.toLowerCase()))
-												.filter(book ->category.equals("default") || (book.getCategory() != null && book.getCategory().equals(category)))
-												.filter(book ->year == null || year.equals("") || Short.valueOf(year).equals(book.getYear()))
-												.filter(book ->yearFrom.equals("default") || book.getYear() >= Short.valueOf(yearFrom))
-												.filter(book ->yearTo.equals("default") || book.getYear() <= Short.valueOf(yearTo))
-												.collect(Collectors.toList());
+											   .stream()
+											   .filter(book ->title.equals("") || book.getTitle().toLowerCase().contains(title.toLowerCase()))
+											   .filter(book ->author.equals("") || book.getAuthor().toLowerCase().contains(author.toLowerCase()))
+											   .filter(book ->category.equals("default") || (book.getCategory() != null && book.getCategory().equals(category)))
+											   .filter(book ->year == null || year.equals("") || Short.valueOf(year).equals(book.getYear()))
+											   .filter(book ->yearFrom.equals("default") || book.getYear() >= Short.valueOf(yearFrom))
+											   .filter(book ->yearTo.equals("default") || book.getYear() <= Short.valueOf(yearTo))
+											   .collect(Collectors.toList());
 		
 		model.addAttribute("usersBooks", getUsersBooks());
 		model.addAttribute("books", books);

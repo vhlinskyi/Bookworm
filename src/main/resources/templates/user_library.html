@@ -27,6 +27,9 @@
     
     <!-- jQuery Raty (https://github.com/wbotelhos/raty)-->
     <script th:src="@{/js/jquery.raty.js}"></script>
+    
+    <!-- JQuery Pagination Plugin -->
+    <script th:src="@{/js/jquery.twbsPagination.min.js}"></script>
 
     <div id="wrapper">
 
@@ -71,7 +74,7 @@
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
                     <li>
-                        <a href="/"><i class="fa fa-fw fa-star"></i> Popular books</a>
+                        <a href="/books"><i class="fa fa-fw fa-star"></i> All books</a>
                     </li>
                     <li>
                         <a href="javascript:;" data-toggle="collapse" data-target="#categories"><i class="fa fa-fw fa-folder"></i> Categories <i class="fa fa-fw fa-caret-down"></i></a>
@@ -150,7 +153,7 @@
 				  </div>
 				
 				</div>
-				
+				<ul id="pagination" style="float: right;"></ul>
             </div>
 
         </div>
@@ -159,6 +162,19 @@
     
     <script th:inline="javascript">
     /*<![CDATA[*/
+               
+        var pages_num = [[${pages_num}]];
+        
+    	if(pages_num > 0) {
+	        $('#pagination').twbsPagination({
+	        	
+			  	totalPages: pages_num,
+			 	visiblePages: 5,
+			  	href: '?page={{number}}'
+			 
+			});
+    	}
+    	
     	var books = [[${books}]];	    
     	$(document).ready(function() {
     		

@@ -152,7 +152,7 @@ public class BookController {
     	
     	bookService.save(book);
     	
-        return new ModelAndView("redirect:/");
+        return new ModelAndView("redirect:/books");
     }
     
     @RequestMapping(value = "/delete", method = RequestMethod.GET)
@@ -166,7 +166,7 @@ public class BookController {
     	bookSourceDao.delete(book);
     	bookService.delete(book);
     	
-        return "redirect:/";
+        return "redirect:/books";
     }
     
     private void setSource(Book book, MultipartFile bookSourceFile) throws IOException {

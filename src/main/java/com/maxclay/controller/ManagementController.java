@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.maxclay.dao.BookSourceDao;
 import com.maxclay.model.Book;
 import com.maxclay.model.User;
 import com.maxclay.model.UsersBooksCount;
@@ -31,13 +32,15 @@ public class ManagementController {
 	private final CategoryService categoryService;
 	private final BookService bookService;
 	private final UserService userService;
+	private final BookSourceDao bookSourceDao;
 	
 	@Autowired
-	public ManagementController(CategoryService categoryService, BookService bookService, UserService userService) {
+	public ManagementController(CategoryService categoryService, BookService bookService, UserService userService, BookSourceDao bookSourceDao) {
 		
 		this.categoryService = categoryService;
 		this.bookService = bookService;
 		this.userService = userService;
+		this.bookSourceDao = bookSourceDao;
 	}
 	
 	@RequestMapping("/management/category")
@@ -61,6 +64,23 @@ public class ManagementController {
 		
 		model.addAttribute("books", bookService.getAll());
 		return "management_books";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/management/books/delete", method = RequestMethod.POST)
+	public String deleteBook(@RequestBody final List<String> books) throws IOException {
+	     
+		for(String b : books) {
+			Book book = bookService.get(b);
+			  
+	    	if(book != null && book.getPath() != null && !book.getPath().equals(""))
+	    		deleteBookPicture(book);
+
+	    	bookSourceDao.delete(book);
+	    	bookService.delete(book);
+		}
+	    
+	    return null;
 	}
 	
 	@ResponseBody
@@ -195,5 +215,10 @@ public class ManagementController {
 		
 		return favoritesBooks;
 	}
+	
+	private void deleteBookPicture(Book book) throws IOException {
+		 Path path = Paths.get(book.getPath());
+		 Files.delete(path);
+	 }
 
 }

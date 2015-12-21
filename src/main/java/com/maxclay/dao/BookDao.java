@@ -13,9 +13,12 @@ public interface BookDao {
 	public List<Book> getByTitle(String title);
 	public List<Book> getByAuthor(String author);
 	public List<Book> getByYear(short year);
+	public List<Book> get(int fromIndex, int toIndex);
 	
 	public List<Book> find(String... words);
 	public void delete(Book book);
 	public void delete(String id);
+	
+	public long count();
 	
 }

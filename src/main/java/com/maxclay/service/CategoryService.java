@@ -13,6 +13,7 @@ public interface CategoryService {
 	public List<Category> getAll();
 	public void delete(Category category);
 	public void delete(String id);
+	
 	public void move(List<String> booksIds, String categoryId);
 
 }

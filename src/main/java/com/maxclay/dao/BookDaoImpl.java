@@ -83,4 +83,24 @@ public class BookDaoImpl implements BookDao {
 		return books;
 	}
 
+	@Override
+	public long count() {
+
+		return mongoOperations.count(null, Book.class);
+	}
+
+	@Override
+	public List<Book> get(int fromIndex, int toIndex) {
+
+		long bookCount = count();
+		if(toIndex > bookCount)
+			toIndex = (int) bookCount;
+		
+		Query query =  new Query();
+		query.skip(fromIndex);
+		query.limit(toIndex - fromIndex);
+		
+		return mongoOperations.find(query, Book.class);
+	}
+
 }

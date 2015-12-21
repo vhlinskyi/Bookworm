@@ -75,7 +75,7 @@
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
                     <li>
-                        <a href="/"><i class="fa fa-fw fa-star"></i> Popular books</a>
+                        <a href="/books"><i class="fa fa-fw fa-star"></i> All books</a>
                     </li>
                     <li>
                         <a href="javascript:;" data-toggle="collapse" data-target="#categories"><i class="fa fa-fw fa-folder"></i> Categories <i class="fa fa-fw fa-caret-down"></i></a>
@@ -250,15 +250,36 @@
 				
 			}
 		}
-		var activeAJAX = 0;
+
 		function deleteBooks() {
 			
-			var selected = getSelected();
-			action = 'delete';
-			for(var i = 0; i < selected.length; i++) {
-				deleteBook(selected[i]);
-			}
+			var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+			var selected = [];
 			
+			$('.bookRow input:checked').each(function() {
+				
+				selected.push($(this).attr('data-id'))
+			});
+			
+			$(document).ajaxSend(function(e, xhr, options) {
+     			xhr.setRequestHeader(header, token);
+     			
+     		});
+			
+			$.ajax({
+     			
+     			url: "/management/books/delete",
+				method: 'POST',
+				contentType: "application/json; charset=utf-8",
+				data : JSON.stringify(selected),
+				cache: false
+				
+     		}).always(function() {
+     			
+     			location.reload(true);
+     		});
+									
 		}
 		
 		function getSelected() {
@@ -268,17 +289,6 @@
 				selected.push($(this).attr('data-id'))
 			});
 			return selected;
-		}
-		
-		function deleteBook(id) {
-			activeAJAX++;
-			$.ajax({
-				type: 'get',
-			    url: '/delete?id=' + id
-			}).always(function(data) {
-				
-		    	if (--activeAJAX == 0) { update(); }
-		    });
 		}
 		
 		function moveToCategory() {

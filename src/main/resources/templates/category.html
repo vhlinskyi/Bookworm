@@ -13,9 +13,6 @@
     <!-- Custom CSS -->    
     <link th:href="@{/css/sb-admin.css}" rel="stylesheet" type="text/css"/>
 
-    <!-- Morris Charts CSS -->
-    <link th:href="@{/css/plugins/morris.css}" rel="stylesheet" type="text/css"/>
-
     <!-- Custom Fonts -->
     <link th:href="@{/font-awesome/css/font-awesome.min.css}" rel="stylesheet" type="text/css"/>
 
@@ -28,6 +25,9 @@
     
     <!-- jQuery Raty (https://github.com/wbotelhos/raty)-->
     <script th:src="@{/js/jquery.raty.js}"></script>
+    
+    <!-- JQuery Pagination Plugin -->
+    <script th:src="@{/js/jquery.twbsPagination.min.js}"></script>
 
     <div id="wrapper">
 
@@ -74,7 +74,7 @@
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
                     <li>
-                        <a href="/"><i class="fa fa-fw fa-star"></i> Popular books</a>
+                        <a href="/books"><i class="fa fa-fw fa-star"></i> All books</a>
                     </li>
                     <li>
                         <a href="javascript:;" data-toggle="collapse" data-target="#categories"><i class="fa fa-fw fa-folder"></i> Categories <i class="fa fa-fw fa-caret-down"></i></a>
@@ -165,8 +165,8 @@
 				    	</div>
 				  </div>		
 				</div>
-				
-            </div>
+				<ul id="pagination" style="float: right;"></ul>
+            </div>            
 
         </div>
         
@@ -174,6 +174,20 @@
     
     <script th:inline="javascript">
     /*<![CDATA[*/
+               
+        var pages_num = [[${pages_num}]];
+        
+    	if(pages_num > 0) {
+    		var categoryId = [[${books}]][0].category;
+	        $('#pagination').twbsPagination({
+	        	
+			  	totalPages: pages_num,
+			 	visiblePages: 5,
+			  	href: '?id=' + categoryId + '&page={{number}}'
+			 
+			});
+    	}
+    	
     	var books = [[${books}]];	    
     	$(document).ready(function() {
     		
@@ -216,11 +230,6 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script th:src="@{/js/bootstrap.min.js}"></script>
-
-    <!-- Morris Charts JavaScript -->
-    <script th:src="@{/js/plugins/morris/raphael.min.js}"></script>
-    <script th:src="@{/js/plugins/morris/morris.min.js}"></script>
-    <script th:src="@{/js/plugins/morris/morris-data.js}"></script>
 
 </body>
 

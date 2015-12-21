@@ -31,9 +31,19 @@ public class UserLibraryController {
 	}
 	
 	@RequestMapping("/library")
-	public String library(Model model) {
+	public String library(Model model, @RequestParam(required = false, defaultValue = "1") Integer page) {
 		
-		model.addAttribute("books", getUsersBooks());
+		List<Book> books = getUsersBooks();
+		long booksNum = books.size();
+		long pagesNum = (booksNum % HomeController.BOOKS_ON_PAGE != 0) ? booksNum / HomeController.BOOKS_ON_PAGE + 1 
+																		: booksNum / HomeController.BOOKS_ON_PAGE;
+				
+		books = (books.size() > page * HomeController.BOOKS_ON_PAGE) ? books.subList((page - 1) * HomeController.BOOKS_ON_PAGE, 
+																							page * HomeController.BOOKS_ON_PAGE)
+																		: books.subList((page - 1) * HomeController.BOOKS_ON_PAGE, books.size());
+		
+		model.addAttribute("pages_num", pagesNum);
+		model.addAttribute("books", books);
 		return "user_library";
 	}
 	
@@ -47,7 +57,7 @@ public class UserLibraryController {
 		userService.save(user);
 		ProfileController.authenticateUser(user);
 		
-		return "redirect:/";
+		return "redirect:/library";
 	}
 	
 	@RequestMapping(value = "/library/delete", method = RequestMethod.GET)

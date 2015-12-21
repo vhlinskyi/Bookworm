@@ -1,5 +1,6 @@
 package com.maxclay.service;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -144,6 +145,29 @@ public class BookServiceImpl implements BookService {
 				categoryDao.add(category);
 			}
 		}
+
+	}
+
+	@Override
+	public long count() {
+		
+		return bookDao.count();
+	}
+
+	@Override
+	public List<Book> getPopular(int quantity) {
+		
+		List<Book> books = getAll();
+		if(books == null)
+			return null;
+		
+		Collections.sort(books);
+		return (books.size() > quantity) ? books.subList(0, quantity) : books;
+	}
+
+	@Override
+	public List<Book> get(int fromIndex, int toIndex) {
+		return bookDao.get(fromIndex, toIndex);
 	}
 	
 }

@@ -1,7 +1,6 @@
 package com.maxclay.controller;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,17 +31,28 @@ public class CategoryController {
 	}
 	
 	@RequestMapping("/categories/category")
-	public String showCategory(Model model, @RequestParam(required = true) String id) {
+	public String showCategory(Model model, @RequestParam(required = true) String id, 
+								@RequestParam(required = false, defaultValue = "1") Integer page) {
 		
 		List<Book> books = new ArrayList<Book>();
 		Category category = categoryService.get(id);
 		if(category.getBooks() != null)
 			for(String bookId : category.getBooks())
-				books.add(bookService.get(bookId));
+				if(bookService.get(bookId) != null)
+					books.add(bookService.get(bookId));
 		
-		Collections.sort(books);
+		long booksNum = books.size();
+		long pagesNum = (booksNum % HomeController.BOOKS_ON_PAGE != 0) ? booksNum / HomeController.BOOKS_ON_PAGE + 1 
+																		: booksNum / HomeController.BOOKS_ON_PAGE;
+				
+		books = (books.size() > page * HomeController.BOOKS_ON_PAGE) ? books.subList((page - 1) * HomeController.BOOKS_ON_PAGE, 
+																							page * HomeController.BOOKS_ON_PAGE)
+																		: books.subList((page - 1) * HomeController.BOOKS_ON_PAGE, books.size());
+
+		
 		model.addAttribute("categoryName", category.getName());
 		model.addAttribute("books", books);
+		model.addAttribute("pages_num", pagesNum);
 		model.addAttribute("usersBooks", getUsersBooks());
 		
 		return "category";

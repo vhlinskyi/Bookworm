@@ -11,6 +11,8 @@ public interface BookService {
 	public Book add(BookDto bookDto);
 	
 	public Book get(String id);
+	public List<Book> getPopular(int quantity);
+	public List<Book> get(int fromIndex, int toIndex);
 	public List<Book> getAll();
 	public List<Book> getByTitle(String title);
 	public List<Book> getByAuthor(String author);
@@ -22,4 +24,5 @@ public interface BookService {
 	
 	public Book save(BookDto bookDto);
 	public Book save(Book book);
+	public long count();
 }
