@@ -72,7 +72,7 @@ public class BookSourceDaoImpl implements BookSourceDao{
 
 	@Override
 	public void delete(Book book) {
-		if(book.getSource() != null && !book.getSource().equals(""))
+		if(book != null && book.getSource() != null && !book.getSource().equals(""))
 			delete(book.getSource());
 	}
 	

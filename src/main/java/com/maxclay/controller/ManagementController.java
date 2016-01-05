@@ -1,5 +1,6 @@
 package com.maxclay.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,10 +33,12 @@ public class ManagementController {
 	private final CategoryService categoryService;
 	private final BookService bookService;
 	private final UserService userService;
+	
 	private final BookSourceDao bookSourceDao;
 	
 	@Autowired
-	public ManagementController(CategoryService categoryService, BookService bookService, UserService userService, BookSourceDao bookSourceDao) {
+	public ManagementController(CategoryService categoryService, BookService bookService, 
+			UserService userService, BookSourceDao bookSourceDao) {
 		
 		this.categoryService = categoryService;
 		this.bookService = bookService;
@@ -141,7 +144,7 @@ public class ManagementController {
 		setUsersEnabled(users, true);
 	    return null;
 	}
-
+	
 	private void deleteUserPicture(User user) throws IOException {
 		if(user.getPicture() == null || user.getPicture().equals(""))
 			return;
@@ -218,7 +221,9 @@ public class ManagementController {
 	
 	private void deleteBookPicture(Book book) throws IOException {
 		 Path path = Paths.get(book.getPath());
-		 Files.delete(path);
+		 File f = path.toFile();
+		 if(f.exists())
+			 Files.delete(path);
 	 }
 
 }

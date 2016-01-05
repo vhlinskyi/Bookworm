@@ -202,7 +202,9 @@ public class BookController {
 	 
 	 private void deleteBookPicture(Book book) throws IOException {
 		 Path path = Paths.get(book.getPath());
-		 Files.delete(path);
+		 File f = path.toFile();
+		 if(f.exists())
+			 Files.delete(path);
 	 }
 	 
 	 private static String getFileExtension(String name) {

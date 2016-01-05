@@ -195,16 +195,20 @@
           
         var action = '';
     	var categories = [];
-		$(document).ready(function() {
-       		 $('#dataTables').DataTable({
-            	  responsive: true
-       		 });
-   		});
+		
     
     	var books = [[${books}]];	    
     	$(document).ready(function() {
     		loadCategories();
+    		
+    		
     	});
+    	
+    	function createTable() {
+    		$('#dataTables').DataTable({
+            	  responsive: true
+       		 });
+    	}
 		
 		function loadCategories() {
 			
@@ -215,7 +219,10 @@
 					createElements(data);
 					setCategoriesNames(data);
 				}
-			});
+			}).always(function() {
+   
+     			createTable();
+     		});
 		}
 		
 		function setCategoriesNames(data) {
@@ -252,7 +259,7 @@
 		}
 
 		function deleteBooks() {
-			
+			action = 'delete';
 			var token = $("meta[name='_csrf']").attr("content");
             var header = $("meta[name='_csrf_header']").attr("content");
 			var selected = [];
@@ -277,13 +284,15 @@
 				
      		}).always(function() {
      			
-     			location.reload(true);
+     			update();
      		});
 									
 		}
 		
+		
 		function getSelected() {
 			var selected = []
+			var counter = 0;
 			$('.bookRow input:checked').each(function() {
 				
 				selected.push($(this).attr('data-id'))
@@ -323,9 +332,9 @@
 		function update() {
 			
 			var table = $("#dataTables").dataTable();
-			var selected = getSelected();
 			var toDelete = [];
-			
+			var selected = getSelected();
+		
 			for(var i = 0; i < selected.length; i++) {
 
 				$(".bookRow input[data-id=" + selected[i] + "]").prop("checked", false);
@@ -339,7 +348,7 @@
 						if(categories[j].id === categoryID)
 							categoryName = categories[j].name;
 					}
-				
+
 					row.find('[data-name="category"]').html(categoryName);
 				}
 				else if(action === 'delete')
