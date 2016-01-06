@@ -5,7 +5,7 @@
 
 	<groupId>com.maxclay</groupId>
 	<artifactId>Bookworm</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>app</version>
 	<packaging>jar</packaging>
 
 	<name>Bookworm</name>
