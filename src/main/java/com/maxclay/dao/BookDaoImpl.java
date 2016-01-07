@@ -4,10 +4,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.TextCriteria;
-import org.springframework.data.mongodb.core.query.TextQuery;
+//import org.springframework.data.mongodb.core.query.TextCriteria;
+//import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.stereotype.Repository;
 
 import com.maxclay.model.Book;
@@ -19,9 +20,9 @@ public class BookDaoImpl implements BookDao {
 	private final MongoOperations mongoOperations;
 	
 	@Autowired
-	public BookDaoImpl(MongoOperations mongoOperations) {
+	public BookDaoImpl(MongoTemplate mongoTemplate) {
 		
-		this.mongoOperations = mongoOperations;
+		this.mongoOperations = mongoTemplate;
 		
 	}
 	
@@ -73,12 +74,14 @@ public class BookDaoImpl implements BookDao {
 		mongoOperations.remove(Query.query(Criteria.where("id").is(id)), Book.class);
 	}
 
+	//TODO
 	@Override
 	public List<Book> find(String... words) {
 		
-		TextCriteria criteria = TextCriteria.forDefaultLanguage().matchingAny(words);
-		Query query = TextQuery.queryText(criteria).sortByScore();
-		List<Book> books = mongoOperations.find(query, Book.class);
+		List<Book> books = null;
+//		TextCriteria criteria = TextCriteria.forDefaultLanguage().matchingAny(words);
+//		Query query = TextQuery.queryText(criteria).sortByScore();
+//		books = mongoOperations.find(query, Book.class);
 		
 		return books;
 	}

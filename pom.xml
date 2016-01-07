@@ -18,11 +18,6 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.8</java.version>
-	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -75,7 +70,7 @@
 	
 	<properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <start-class>demo.Application</start-class>
+        <start-class>com.maxclay.BookwormApplication</start-class>
         <java.version>1.8</java.version>
         <tomcat.version>8.0.9</tomcat.version>
     </properties>

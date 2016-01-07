@@ -12,6 +12,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -27,9 +28,9 @@ public class UserDaoImpl implements UserDao {
 	private final MongoOperations mongoOperations;
 	
 	@Autowired
-	public UserDaoImpl(MongoOperations mongoOperations) {
+	public UserDaoImpl(MongoTemplate mongoTemplate) {
 		
-		this.mongoOperations = mongoOperations;
+		this.mongoOperations = mongoTemplate;
 		
 	}
 

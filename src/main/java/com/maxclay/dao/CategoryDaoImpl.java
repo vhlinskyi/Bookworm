@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
@@ -16,9 +17,9 @@ public class CategoryDaoImpl implements CategoryDao {
 	private final MongoOperations mongoOperations;
 	
 	@Autowired
-	public CategoryDaoImpl(MongoOperations mongoOperations) {
+	public CategoryDaoImpl(MongoTemplate mongoTemplate) {
 		
-		this.mongoOperations = mongoOperations;	
+		this.mongoOperations = mongoTemplate;	
 	}
 
 	@Override
