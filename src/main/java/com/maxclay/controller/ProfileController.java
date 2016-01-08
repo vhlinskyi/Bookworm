@@ -64,14 +64,14 @@ public class ProfileController {
 	public String registerUserAccount(@ModelAttribute("user") @Valid UserDto accountDto, BindingResult bindingResult) {
 		
 		if(bindingResult.hasErrors())
-			return "/signup";
+			return "signup";
 		
 		User user = new User();
 		user = registerUser(accountDto);
 		
 		if (user == null) {
 			bindingResult.rejectValue("email", "message.regError");
-			return "/signup";
+			return "signup";
 		}
 		
 		authenticateUser(user);
@@ -169,8 +169,11 @@ public class ProfileController {
 	 }
 	
 	 private void deleteUserPicture(User user) throws IOException {
+		 
 		 Path path = Paths.get(user.getPicture());
-		 Files.delete(path);
+		 File f = path.toFile();
+		 if(f.exists())
+			 Files.delete(path);
 	 }
 	 
 	 private static String getFileExtension(String name) {

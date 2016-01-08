@@ -1,5 +1,6 @@
 package com.maxclay.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,8 +8,6 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-//import org.springframework.data.mongodb.core.query.TextCriteria;
-//import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.stereotype.Repository;
 
 import com.maxclay.model.Book;
@@ -74,14 +73,18 @@ public class BookDaoImpl implements BookDao {
 		mongoOperations.remove(Query.query(Criteria.where("id").is(id)), Book.class);
 	}
 
-	//TODO
 	@Override
 	public List<Book> find(String... words) {
 		
-		List<Book> books = null;
-//		TextCriteria criteria = TextCriteria.forDefaultLanguage().matchingAny(words);
-//		Query query = TextQuery.queryText(criteria).sortByScore();
-//		books = mongoOperations.find(query, Book.class);
+		List<Book> books = new ArrayList<Book>();
+
+		for(String word : words) {
+			
+			Criteria criteria = new Criteria();
+			criteria.orOperator(Criteria.where("description").regex(word, "i"), Criteria.where("title").regex(word, "i"));
+			
+			books.addAll(mongoOperations.find(Query.query(criteria), Book.class));
+		}
 		
 		return books;
 	}
