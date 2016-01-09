@@ -66,7 +66,9 @@ public class HomeController {
         
 		Book book = bookService.get(id);
 		model.addAttribute("book", book);
-		model.addAttribute("initialRatingScore", getRatingScore(book));
+		
+		if(book != null)
+			model.addAttribute("initialRatingScore", getRatingScore(book));
 		
 		return "show_book";
 	}

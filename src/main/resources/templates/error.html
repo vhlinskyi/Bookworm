@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extrasspringsecurity3">
+<head lang="en">
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	
+	<title th:text="${status}">Not found</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" media="screen" />
+    
+
+    <!-- Custom CSS -->    
+    <link th:href="@{/css/sb-admin.css}" rel="stylesheet" type="text/css"/>
+
+    <!-- Custom Fonts -->
+    <link th:href="@{/font-awesome/css/font-awesome.min.css}" rel="stylesheet" type="text/css"/>
+
+</head>
+
+<body>
+
+	<!-- jQuery -->
+    <script th:src="@{/js/jquery.js}"></script>
+      
+    <!-- Bootstrap Core JavaScript -->
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">Bookworm</a>
+            </div>
+            <!-- Top Menu Items -->
+            <ul class="nav navbar-right top-nav">
+            	<li>
+	            	<form th:action="@{/search}" method="get">	
+		            	<div class="searchInput">
+		            		<input type="text" class="form-control" name="searchParam"/>
+		            	</div>
+		            	<div class="searchButton">
+		            		<button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>          
+		            	</div>
+	            	</form>
+            	</li>
+            </ul>
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav side-nav">
+                    <li>
+                        <a href="/books"><i class="fa fa-fw fa-star"></i> All books</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;" data-toggle="collapse" data-target="#categories"><i class="fa fa-fw fa-folder"></i> Categories <i class="fa fa-fw fa-caret-down"></i></a>
+                        <ul id="categories" class="collapse">
+                                                	
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="/advanced_search"><i class="fa fa-fw fa-search"></i> Search</a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-fw fa-child"></i> Help</a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-fw fa-newspaper-o"></i> About Project</a>
+                    </li>
+                </ul> 
+            </div>
+        </nav>
+
+        <div id="page-wrapper">
+
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="indigo-text center" th:text="${error}">Not found</h1>
+						<h3 class="page-header" th:text="${message}">
+							This page is not available
+						</h3 >
+                    </div>
+                </div>
+                
+            </div>                    
+
+        </div>
+        
+    </div>
+
+    
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+       
+    	$(document).ready(function() {
+    		
+    		loadCategories();
+    	});
+		
+		function loadCategories() {
+			
+			$.ajax({
+				type: 'get',
+			    url: '/categories/all',
+				success: function(data) {
+					createElements(data);
+				}
+			});
+		}
+		
+		function createElements(data) {
+			
+			for(var i = 0; i < data.length; i++) {
+				var url = "/categories/category?id=" + data[i].id;
+				$("#categories").append("<li><a href=" + url + ">" + data[i].name + "</a></li>")
+			}
+		}
+
+	/*]]>*/
+    </script>
+
+
+</body>
+
+</html>
