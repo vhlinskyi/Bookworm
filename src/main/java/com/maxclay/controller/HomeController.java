@@ -115,35 +115,37 @@ public class HomeController {
 	}
 
 	@RequestMapping(value = "/view", method = RequestMethod.GET)
-	 public void readBook(@RequestParam(required = true) String source,
+	public void readBook(@RequestParam(required = true) String source,
 			 HttpServletRequest request, HttpServletResponse response) throws IOException {
 		 
-	     try(OutputStream out = response.getOutputStream()) {
+		response.setHeader("X-Frame-Options", "GOFORIT");
+	    try(OutputStream out = response.getOutputStream()) {
 	    	 
-	         byte[] documentInBytes = bookSourceDao.get(source).getBookSourceInBytes();   
-	         response.setDateHeader("Expires", -1);
-	         response.setContentType("application/pdf");
-	         response.setContentLength(documentInBytes.length);
-	         out.write(documentInBytes);
-	     }
-	 }
+	    	byte[] documentInBytes = bookSourceDao.get(source).getBookSourceInBytes();   
+	        response.setDateHeader("Expires", -1);
+	        response.setContentType("application/pdf");
+	        response.setContentLength(documentInBytes.length);
+	        out.write(documentInBytes);
+	        
+	    }
+	}
 	 
-	 private List<String> getUsersBooks() {
+	private List<String> getUsersBooks() {
 		 
-		 List<String> list = new ArrayList<String>();
-		 User user = ProfileController.getAuthenticatedUser();
-		 if(user != null && user.getBooks() != null)
-			 list = user.getBooks();
+		List<String> list = new ArrayList<String>();
+		User user = ProfileController.getAuthenticatedUser();
+		if(user != null && user.getBooks() != null)
+			list = user.getBooks();
 		
-		 return list; 
-	 }
+		return list; 
+	}
 	 
-	 private int getRatingScore(Book book) {
-		 User user = ProfileController.getAuthenticatedUser();
-		 if(user == null || book.getRates() == null || !book.getRates().containsKey(user.getId()))
-			 return 0;
-		 else
-			 return book.getRates().get(user.getId());
-	 }
+	private int getRatingScore(Book book) {
+		User user = ProfileController.getAuthenticatedUser();
+		if(user == null || book.getRates() == null || !book.getRates().containsKey(user.getId()))
+			return 0;
+		else
+			return book.getRates().get(user.getId());
+	}
 
 }
