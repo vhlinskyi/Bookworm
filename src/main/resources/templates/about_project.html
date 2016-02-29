@@ -6,7 +6,7 @@
 	<meta charset="UTF-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	
-	<title>Profile</title>
+	<title>About Bookworm</title>
 
     <!-- Bootstrap Core CSS -->
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" media="screen" />
@@ -15,18 +15,18 @@
     <!-- Custom CSS -->    
     <link th:href="@{/css/sb-admin.css}" rel="stylesheet" type="text/css"/>
 
-    <!-- Morris Charts CSS -->
-    <link th:href="@{/css/plugins/morris.css}" rel="stylesheet" type="text/css"/>
-
     <!-- Custom Fonts -->
     <link th:href="@{/font-awesome/css/font-awesome.min.css}" rel="stylesheet" type="text/css"/>
 
 </head>
 
 <body>
-	
+
 	<!-- jQuery -->
     <script th:src="@{/js/jquery.js}"></script>
+      
+    <!-- Bootstrap Core JavaScript -->
+    <script th:src="@{/js/bootstrap.min.js}"></script>
 
     <div id="wrapper">
 
@@ -67,6 +67,8 @@
                         </li>
                     </ul>
                 </li>
+                <a th:href="@{/login}" class="navbar-brand" sec:authorize="hasRole('ROLE_ANONYMOUS')">Login</a>
+                <a th:href="@{/signup}" class="navbar-brand" sec:authorize="hasRole('ROLE_ANONYMOUS')">Sign up</a>
             </ul>
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
@@ -85,11 +87,12 @@
                     <li>
                         <a href="/advanced_search"><i class="fa fa-fw fa-search"></i> Search</a>
                     </li>
-                    <li class="active">
+                    
+                    <li sec:authorize="isAuthenticated()">
                         <a href="/profile"><i class="fa fa-fw fa-user"></i> Profile</a>
                     </li>
                     <li sec:authorize="hasRole('ROLE_ADMIN')">
-                        <a href="#" data-toggle="collapse" data-target="#management"><i class="fa fa-fw fa-wrench"></i> Management <i class="fa fa-fw fa-caret-down"></i></a>
+                        <a href="javascript:;" data-toggle="collapse" data-target="#management"><i class="fa fa-fw fa-wrench"></i> Management <i class="fa fa-fw fa-caret-down"></i></a>
                         <ul id="management" class="collapse">
                             <li>
                                 <a href="/management/books">Books</a>
@@ -108,7 +111,7 @@
                     <li>
                         <a href="#"><i class="fa fa-fw fa-child"></i> Help</a>
                     </li>
-                    <li>
+                    <li class="active">
                         <a href="/about"><i class="fa fa-fw fa-newspaper-o"></i> About Project</a>
                     </li>
                 </ul> 
@@ -122,46 +125,50 @@
                 <!-- Page Heading -->
                 <div class="row">
                     <div class="col-lg-12">
-                        <h1 class="page-header">
-                            Your profile
-                        </h1>
-                        
+                        <h1 class="indigo-text center page-header">Welcome!</h1>
+						<div class="description">
+							Bookworm is an educational project that serves as an online library.<br/>
+							<br/>
+							Using this web application users can find, read and download books in PDF format.<br/>
+							Authorized users have access to a section called <a href="/library">"My library"</a> which is used for adding favourite books.<br/>
+							They can leave comments and rate a particular book.<br/>
+							<br/>
+							Administrators have the ability to add new books, edit records about <a href="/management/books">existing books</a> or remove them.<br/>
+							Furthermore, admins have rights to manage <a href="/management/users">accounts</a>, 
+							book <a href="/management/category">categories</a>,
+							and the ability to view site <a href="/management/statistics">statistics.</a><br/>
+							If you are interested in using these functions use next login and password:<br/>
+							<div id="requisites">email: 'admin@gmail.com',<br/>
+							password: 'admin'.</div>
+							<br/>
+							This project has been written using Java programming language, Spring MVC framework and MongoDB DBMS.<br/>
+							The following technologies were used to create the attractive user interface:<br/>
+							Twitter Bootstrap,<br/>
+							jQuery Raty - A Star Rating Plugin,<br/>
+							Morris Charts plugin,<br/>
+							DataTables plugin.<br/>
+							<br/>
+							Any questions, comments and suggestions are very welcome.<br/>
+							(Email: <a href="mailto:glinskiy56@gmail.com">glinskiy56@gmail.com</a>)
+							<br/>
+							<br/>
+							Project on GitHub: <a href="https://github.com/maxclay/Bookworm" target="_blank">https://github.com/maxclay/Bookworm</a>
+						</div>
                     </div>
                 </div>
                 
-                <div class="col-lg-10">
-                	<img class="media-object" th:src="@{/userPicture}" width="200px" height="200px"/>
-                	<div>
-						<label >User name: </label>
-                		<b sec:authentication="principal.name"></b>
-                	</div>
-                	<div>
-						<label >Email: </label>
-                		<b sec:authentication="principal.email"></b>
-                	</div>
-                	<div>
-						<label >Registration date: </label>
-                		<b sec:authentication="principal.registrationDate"></b>
-                	</div>
-                	<div>
-						<label >Information: </label>
-                		<b sec:authentication="principal.info"></b>
-                	</div>
-                	<div>
-						<a class="btn btn-warning" href="/profile/edit">Edit profile</a>
-                	</div>
-                </div>
-				
-            </div>
+            </div>                    
 
         </div>
         
     </div>
+
     
     <script th:inline="javascript">
     /*<![CDATA[*/
-    	var books = [[${books}]];	    
+       
     	$(document).ready(function() {
+    		
     		loadCategories();
     	});
 		
@@ -183,16 +190,10 @@
 				$("#categories").append("<li><a href=" + url + ">" + data[i].name + "</a></li>")
 			}
 		}
+
 	/*]]>*/
     </script>
 
-    <!-- Bootstrap Core JavaScript -->
-    <script th:src="@{/js/bootstrap.min.js}"></script>
-
-    <!-- Morris Charts JavaScript -->
-    <script th:src="@{js/plugins/morris/raphael.min.js}"></script>
-    <script th:src="@{js/plugins/morris/morris.min.js}"></script>
-    <script th:src="@{js/plugins/morris/morris-data.js}"></script>
 
 </body>
 

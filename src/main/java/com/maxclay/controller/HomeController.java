@@ -129,6 +129,12 @@ public class HomeController {
 	        
 	    }
 	}
+	
+	@RequestMapping("/about")
+	public String description() {
+
+		return "about_project";
+	}
 	 
 	private List<String> getUsersBooks() {
 		 
