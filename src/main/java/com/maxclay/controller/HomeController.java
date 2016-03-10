@@ -135,6 +135,12 @@ public class HomeController {
 
 		return "about_project";
 	}
+	
+	@RequestMapping("/help")
+	public String help() {
+
+		return "help";
+	}
 	 
 	private List<String> getUsersBooks() {
 		 

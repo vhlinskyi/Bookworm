@@ -108,10 +108,10 @@
                             </li>                       	
                         </ul>
                     </li>
-                    <li>
+                    <li class="active">
                         <a href="/help"><i class="fa fa-fw fa-child"></i> Help</a>
                     </li>
-                    <li class="active">
+                    <li>
                         <a href="/about"><i class="fa fa-fw fa-newspaper-o"></i> About Project</a>
                     </li>
                 </ul> 
@@ -127,32 +127,28 @@
                     <div class="col-lg-12">
                         <h1 class="indigo-text center page-header">Welcome!</h1>
 						<div class="description">
-							Bookworm is an educational project that serves as an online library.<br/>
+							Here you can find a brief description of site sections. <br/>
 							<br/>
-							Using this web application users can find, read and download books in PDF format.<br/>
-							Authorized users have access to a section called <a href="/library">"My library"</a> which is used for adding favourite books.<br/>
-							They can leave comments and rate a particular book.<br/>
+							For guests: <br/>
+							<a href="/">"Main page"</a> - contains five the most rated books. <br/>
+							<a href="/books">"All books"</a> - provides access to all books, ten books are displayed on this page. <br/>
+							"Categories" - provides the ability to view books that grouped into certain category. <br/>
+							<a href="/advanced_search">"Search"</a> - advanced search helps to find books by various parameters. <br/>
 							<br/>
-							Administrators have the ability to add new books, edit records about <a href="/management/books">existing books</a> or remove them.<br/>
-							Furthermore, admins have rights to manage <a href="/management/users">accounts</a>, 
-							book <a href="/management/category">categories</a>,
-							and the ability to view site <a href="/management/statistics">statistics.</a><br/>
-							If you are interested in using these functions use next login and password:<br/>
-							<div id="requisites">email: 'admin@gmail.com',<br/>
-							password: 'admin'.</div>
-							<br/>
-							This project has been written using Java programming language, Spring MVC framework and MongoDB DBMS.<br/>
-							The following technologies were used to create the attractive user interface:<br/>
-							Twitter Bootstrap,<br/>
-							jQuery Raty - A Star Rating Plugin,<br/>
-							Morris Charts plugin,<br/>
-							DataTables plugin.<br/>
-							<br/>
-							Any questions, comments and suggestions are very welcome.<br/>
-							(Email: <a href="mailto:glinskiy56@gmail.com">glinskiy56@gmail.com</a>)
-							<br/>
-							<br/>
-							Project on GitHub: <a href="https://github.com/maxclay/Bookworm" target="_blank">https://github.com/maxclay/Bookworm</a>
+							For users: <br/>
+							You must send a valid registration form to create an account. You will be able to add and edit information on your profile page. 
+							Authorized users also have access to a section called <a href="/library">"My library"</a> which is used for adding favourite books. 
+							They have access to "Add to library" button below every book record. 
+							You can leave comments and rate a particular book, but notice that you can't change or delete your marks and comments. 
+							<br/><br/>
+							For admins: <br/>
+							Administrators have all rights of regular user and an access to site management: <br/>
+							<a href="/management/books">"Books"</a> - you have the ability to add new books, edit records about existing books or remove them. <br/>
+							<a href="/management/users">"Users"</a> - you can view information about registered users accounts(status, rights, registration date), remove or ban/unban them. <br/>
+							<a href="/management/category">"Categories"</a> - provides the ability to create new categories or remove existing ones. <br/>
+							<a href="/management/statistics">"Statistics"</a> - provides access to diagrams that depict the most rated books, the most commented books and favorites books(books that has been added to library by great count of users). 
+							<br/><br/>
+							Admins also have access to "Edit" and "Delete" buttons below every book record.
 						</div>
                     </div>
                 </div>
