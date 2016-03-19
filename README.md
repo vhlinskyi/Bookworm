@@ -16,7 +16,8 @@ The following technologies were used to create the attractive user interface:
 - [Twitter Bootstrap] (http://getbootstrap.com/),
 - [jQuery Raty - A Star Rating Plugin] (https://github.com/wbotelhos/raty),
 - [Morris Charts plugin] (http://morrisjs.github.io/morris.js/),
-- [DataTables plugin] (https://datatables.net/).
+- [DataTables plugin] (https://datatables.net/),
+- [JQuery Pagination Plugin] (http://esimakin.github.io/twbs-pagination/).
 
 ## How to run it?
 - First of all, you'll need to install [Apache Maven] (https://maven.apache.org/) 
